@@ -1,0 +1,20 @@
+DECLARAÇÃO DE PRIVACIDADE — wavizo.SlSSAcompanhamentodeconsultas
+
+Este aplicativo é 100% local-first. Ele armazena todos os dados de
+agendamento (agendas importadas, histórico de meses, listas geradas)
+exclusivamente no armazenamento local do navegador (localStorage) do
+dispositivo onde foi instalado.
+
+Nenhum dado é enviado para a internet, para servidores, para nuvem ou
+para terceiros. Não há coleta de uso, analytics, rastreadores nem
+identificadores de dispositivo. A única comunicação de rede que o app
+realiza é a abertura de links externos (wa.me, tel:) gerados pelo
+usuário, que saem do app e seguem para o navegador.
+
+Os dados permanecem no aparelho onde o app foi instalado. Cada
+dispositivo ou navegador possui seu próprio armazenamento independente,
+mesmo acessando o mesmo link. Para apagar os dados, use o botão
+"Limpar todos os dados" na barra lateral.
+
+Versão do app: 1.0.0.0
+Distribuidor: wavizo

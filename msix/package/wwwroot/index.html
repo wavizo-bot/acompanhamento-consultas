@@ -1,0 +1,564 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="light" />
+  <title>Acompanhamento de Consultas</title>
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#164b47" />
+  <link rel="icon" href="icons/favicon-32.png" sizes="32x32" type="image/png" />
+  <link rel="icon" href="icons/favicon-64.png" sizes="64x64" type="image/png" />
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Acompanhamento" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <style>
+    /* Prontuário de Mesa: leitura editorial, estados visíveis e ações locais explícitas. */
+    :root { --ink:#182b2b; --muted:#637170; --paper:#f7f4ec; --card:#fffdf8; --line:#d9ddd4; --teal:#16635b; --teal-soft:#e0f0eb; --slate:#35505a; --amber:#c48722; --amber-soft:#fbf0d9; --red:#a53c36; --red-soft:#f8e3df; --blue-soft:#e3eff3; --radius:14px; --shadow:0 10px 28px rgba(30,57,52,.08); }
+    * { box-sizing:border-box; }
+    body { margin:0; min-width:320px; color:var(--ink); background:var(--paper); font-family:Arial, Helvetica, sans-serif; font-size:15px; line-height:1.45; }
+    button, select, textarea, input { font:inherit; }
+    button { border:0; cursor:pointer; }
+    button:focus-visible, select:focus-visible, textarea:focus-visible, input:focus-visible { outline:3px solid rgba(22,99,91,.35); outline-offset:2px; }
+    .app-shell { min-height:100vh; display:grid; grid-template-columns:340px minmax(0,1fr); }
+    .sidebar { position:sticky; top:0; height:100vh; padding:28px 24px; color:#f8fbf9; background:#164b47; overflow:auto; }
+    .sidebar::before { content:""; position:absolute; inset:0; background:repeating-linear-gradient(165deg, rgba(255,255,255,.028) 0 1px, transparent 1px 12px), linear-gradient(180deg, rgba(14,65,60,.94), rgba(15,72,66,.91)); pointer-events:none; }
+    .sidebar > * { position:relative; }
+    .brand { display:flex; align-items:center; gap:13px; padding-bottom:25px; border-bottom:1px solid rgba(255,255,255,.22); }
+    .brand-mark { position:relative; width:44px; height:44px; flex:0 0 auto; border-radius:12px; background:#f7f4ec; box-shadow:0 4px 16px rgba(0,0,0,.16); }
+    .brand-mark::before { content:""; position:absolute; top:10px; left:13px; width:17px; height:22px; border:2px solid #16635b; border-radius:3px; }
+    .brand-mark::after { content:""; position:absolute; top:15px; left:17px; width:9px; height:2px; background:#16635b; box-shadow:0 5px 0 #16635b, 0 10px 0 #16635b; }
+    .brand p { margin:0; color:rgba(248,251,249,.76); font-size:12px; letter-spacing:.04em; text-transform:uppercase; }
+    .brand h1 { margin:1px 0 0; font-family:Georgia, 'Times New Roman', serif; font-size:23px; line-height:1.05; font-weight:500; }
+    .contact-card { margin-top:22px; padding:15px 14px 14px; border:1px solid rgba(233,189,102,.52); border-radius:10px; background:rgba(6,48,43,.33); box-shadow:inset 3px 0 0 #e9bd66; }
+    .contact-card .eyebrow { margin-bottom:5px; color:#f5d791; }
+    .contact-card p { margin:0; color:rgba(255,255,255,.88); font-size:12px; line-height:1.5; }
+    .contact-card a { display:inline-block; margin-top:8px; color:#fff7df; font-size:15px; font-weight:700; letter-spacing:.04em; text-decoration:none; }
+    .contact-card a:hover { text-decoration:underline; }
+    .sidebar-section { margin-top:27px; }
+    .eyebrow { margin:0 0 7px; color:#c6e0d8; font-size:11px; letter-spacing:.12em; text-transform:uppercase; font-weight:700; }
+    .sidebar h2 { margin:0; color:#fff; font-family:Georgia, 'Times New Roman', serif; font-size:20px; font-weight:500; }
+    .sidebar-copy { margin:10px 0 14px; color:rgba(255,255,255,.83); font-size:13px; }
+    textarea { display:block; width:100%; min-height:228px; padding:12px; color:#183531; border:1px solid rgba(255,255,255,.4); border-radius:11px; background:#fbf9f2; resize:vertical; box-shadow:inset 0 1px 2px rgba(0,0,0,.06); }
+    .button { display:inline-flex; align-items:center; justify-content:center; gap:8px; min-height:39px; padding:9px 13px; border-radius:10px; font-size:13px; font-weight:700; transition:transform 150ms cubic-bezier(.23,1,.32,1), background 150ms ease, box-shadow 150ms ease; }
+    .button:active { transform:scale(.97); }
+    .button-primary { width:100%; margin-top:10px; color:#fff; background:#e9bd66; box-shadow:0 5px 14px rgba(0,0,0,.15); }
+    .button-primary:hover { background:#f4ce82; }
+    .button-subtle { color:#f3f8f6; background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.20); }
+    .button-subtle:hover { background:rgba(255,255,255,.20); }
+    .button-danger { width:100%; margin-top:8px; color:#fff; background:rgba(165,60,54,.86); border:1px solid rgba(255,255,255,.14); }
+    .button-danger:hover { background:#b94840; }
+    .install-card { display:none; margin-top:8px; padding:13px 14px 14px; border:1px solid rgba(233,189,102,.52); border-radius:10px; background:rgba(6,48,43,.33); box-shadow:inset 3px 0 0 #e9bd66; }
+    .install-card.ready { display:block; }
+    .install-card p { margin:0 0 9px; color:rgba(255,255,255,.88); font-size:12px; line-height:1.5; }
+    .button-install { width:100%; color:#183531; background:#e9bd66; }
+    .button-install:hover { background:#f4ce82; }
+    .sidebar-footer { margin-top:25px; padding-top:18px; border-top:1px solid rgba(255,255,255,.22); }
+    .privacy-note { margin:10px 0 0; color:rgba(255,255,255,.75); font-size:12px; line-height:1.45; }
+    .main { min-width:0; padding:33px clamp(22px,4vw,62px) 48px; }
+    .main-header { display:flex; align-items:flex-start; justify-content:space-between; gap:20px; margin-bottom:28px; }
+    .main-title { max-width:640px; }
+    .main-title .eyebrow { color:var(--teal); }
+    .main-title h2 { margin:0; font-family:Georgia, 'Times New Roman', serif; font-size:clamp(29px,3.5vw,45px); line-height:1.02; font-weight:500; letter-spacing:-.03em; }
+    .main-title p { max-width:650px; margin:11px 0 0; color:var(--muted); }
+    .storage-card { display:flex; align-items:center; gap:10px; flex:0 0 auto; min-width:150px; padding:12px 14px; border:1px solid var(--line); border-radius:12px; background:var(--card); box-shadow:0 4px 15px rgba(33,59,52,.04); }
+    .storage-dot { width:9px; height:9px; flex:0 0 auto; border-radius:50%; background:var(--amber); box-shadow:0 0 0 4px var(--amber-soft); }
+    .storage-card strong { display:block; font-size:13px; }
+    .storage-card span { display:block; color:var(--muted); font-size:12px; }
+    .month-panel { position:relative; margin-bottom:25px; padding:43px 21px 18px; border:1px solid var(--line); border-radius:var(--radius); background:var(--card); box-shadow:var(--shadow); }
+    .month-panel::before { content:"ARQUIVO MENSAL · REGISTROS INCORPORADOS"; position:absolute; top:0; right:0; left:0; padding:9px 21px; color:#54706a; border-bottom:1px solid #e5e4dc; border-radius:var(--radius) var(--radius) 0 0; background:#f1f2ea; font-size:10px; font-weight:800; letter-spacing:.11em; }
+    .section-heading { display:flex; align-items:baseline; justify-content:space-between; gap:18px; margin-bottom:14px; }
+    .section-heading h3 { margin:0; font-family:Georgia, 'Times New Roman', serif; font-size:21px; font-weight:500; }
+    .section-heading p { margin:0; color:var(--muted); font-size:13px; }
+    .month-chips { display:flex; flex-wrap:wrap; gap:9px; min-height:37px; }
+    .month-chip { display:inline-flex; align-items:center; gap:7px; padding:8px 10px; border:1px solid #a9c9bf; border-radius:3px 9px 9px 3px; color:#114f48; background:#f0f7f3; font-size:13px; font-weight:700; box-shadow:inset 3px 0 0 #16635b; }
+    .month-chip::before { content:"ARQ"; color:#66867e; font-size:9px; letter-spacing:.08em; }
+    .month-chip .chip-count { min-width:18px; padding:1px 5px; border-radius:999px; color:#fff; background:var(--teal); font-size:11px; text-align:center; }
+    .empty-months { display:flex; align-items:center; min-height:37px; color:var(--muted); font-size:13px; font-style:italic; }
+    .filters { position:relative; display:grid; grid-template-columns:minmax(175px,.8fr) minmax(175px,.8fr) minmax(300px,1.3fr) auto; gap:14px; align-items:end; margin-bottom:17px; padding:42px 20px 19px; border:1px solid var(--line); border-radius:var(--radius); background:#eef2ed; }
+    .filters::before { content:"SELEÇÃO DE ARQUIVO · DEFINA O RECORTE DO HISTÓRICO"; position:absolute; top:0; right:0; left:0; padding:9px 20px; color:#557069; border-bottom:1px solid #d8dfd8; font-size:10px; font-weight:800; letter-spacing:.1em; }
+    .filter-field label { display:block; margin:0 0 6px; color:#334b49; font-size:12px; font-weight:700; letter-spacing:.03em; }
+    .filter-field select { width:100%; min-height:39px; padding:8px 10px; color:var(--ink); border:1px solid #bcc8c1; border-radius:9px; background:#fffdf8; }
+    .month-selector { display:flex; flex-wrap:wrap; gap:7px; min-height:39px; padding:5px; border:1px solid #bcc8c1; border-radius:9px; background:#fffdf8; }
+    .month-option { display:flex; align-items:center; gap:5px; padding:4px 7px; border:1px solid #d6ded8; border-radius:7px; color:#425553; background:#f8faf7; font-size:12px; }
+    .month-option input { accent-color:var(--teal); }
+    .filter-actions { display:flex; gap:8px; }
+    .button-run { min-height:39px; white-space:nowrap; color:#fff; background:var(--teal); }
+    .button-run:hover { background:#0e5049; }
+    .list-panel { position:relative; overflow:hidden; border:1px solid var(--line); border-radius:var(--radius); background:var(--card); box-shadow:var(--shadow); }
+    .list-toolbar { display:flex; align-items:center; justify-content:space-between; gap:16px; padding:18px 20px 16px; border-bottom:1px solid var(--line); background:#fffdf8; box-shadow:inset 0 -4px 0 #f4f1e8; }
+    .list-toolbar h3 { margin:0; font-family:Georgia, 'Times New Roman', serif; font-size:21px; font-weight:500; }
+    .list-toolbar p { margin:3px 0 0; color:var(--muted); font-size:13px; }
+    .toolbar-actions { display:flex; flex-wrap:wrap; gap:8px; }
+    .button-outline { min-height:37px; color:#245751; border:1px solid #aac7be; background:#f4faf7; }
+    .button-outline:hover { background:#e5f1eb; }
+    .button-print { min-height:37px; color:#314a53; border:1px solid #b7c5cb; background:#f2f7f8; }
+    .button-print:hover { background:#e3eef0; }
+    .order-bar { display:flex; flex-wrap:wrap; align-items:center; gap:11px; padding:14px 20px; border-bottom:1px solid var(--line); background:#fbfaf5; }
+    .order-label { color:#334b49; font-size:12px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; }
+    .order-options { display:flex; flex-wrap:wrap; gap:7px; }
+    .order-btn { min-height:32px; padding:6px 12px; font-size:12px; }
+    .order-btn.active { color:#fff; background:var(--teal); border-color:var(--teal); }
+    .order-btn.active:hover { background:#0e5049; }
+    .list-summary { padding:10px 20px; color:#536563; border-bottom:1px solid #e3e5df; background:#fbfaf5; font-size:12px; }
+    .table-wrap { overflow:auto; }
+    table { width:100%; min-width:810px; border-collapse:collapse; }
+    th { padding:11px 14px; color:#56706c; border-bottom:1px solid var(--line); background:#f5f5ef; font-size:11px; letter-spacing:.08em; text-align:left; text-transform:uppercase; white-space:nowrap; }
+    td { padding:15px 14px; border-bottom:1px solid #e9e9e3; vertical-align:top; }
+    tr:last-child td { border-bottom:0; }
+    tbody tr:hover { background:#fffcf6; }
+    .person-name { display:block; margin-bottom:3px; font-weight:700; }
+    .person-detail { display:block; color:var(--muted); font-size:12px; }
+    .cell-id { color:#39524f; font-variant-numeric:tabular-nums; font-size:13px; }
+    .phone-cell { min-width:145px; color:#39524f; font-variant-numeric:tabular-nums; }
+    .phone-line { display:block; font-size:13px; line-height:1.55; letter-spacing:.02em; color:var(--teal); text-decoration:none; }
+    .phone-line:hover { text-decoration:underline; }
+    .events { display:flex; flex-wrap:wrap; gap:6px; min-width:360px; }
+    .event { display:inline-flex; align-items:center; gap:5px; padding:5px 7px; border:1px solid #d5ddd7; border-radius:7px; background:#fff; font-size:12px; white-space:nowrap; }
+    .event-date { color:#596b69; font-variant-numeric:tabular-nums; }
+    .badge { display:inline-flex; padding:2px 5px; border:1px solid currentColor; border-radius:2px; font-size:10px; font-weight:800; letter-spacing:.03em; text-transform:uppercase; }
+    .status-AGENDADO, .status-RESERVADO, .status-AGENDA-RESERVA { color:#235d72; background:#e2f0f5; }
+    .status-ADMITIDO { color:#176241; background:#dcf0e4; }
+    .status-CANCELADO, .status-RESERVA-CANCELADA, .status-NAO-REALIZADO { color:#98413a; background:#f8e4e0; }
+    .status-TRANSFERIDO { color:#7c5018; background:#f8ecd5; }
+    .status-FALTOU { color:#7e3e25; background:#f7e6d9; }
+    .empty-list { padding:42px 25px; color:#65716e; text-align:center; }
+    .empty-list strong { display:block; margin-bottom:5px; color:#37514d; font-family:Georgia, 'Times New Roman', serif; font-size:21px; font-weight:500; }
+    .empty-ficha { position:relative; max-width:430px; margin:0 auto; padding:26px 26px 22px 42px; border:1px solid #d4d8d0; border-radius:3px 11px 11px 3px; background:repeating-linear-gradient(to bottom, #fffdf8 0, #fffdf8 28px, #e9e8df 29px, #fffdf8 30px); box-shadow:inset 4px 0 0 #b9cfbf, 0 7px 18px rgba(30,57,52,.05); }
+    .empty-ficha::before { content:"FICHA AINDA SEM REGISTRO"; position:absolute; top:9px; left:42px; color:#668078; font-size:9px; font-weight:800; letter-spacing:.13em; }
+    .empty-ficha::after { content:""; position:absolute; top:0; bottom:0; left:27px; border-left:1px solid #e6c9c5; }
+    .toast { position:fixed; right:22px; bottom:22px; z-index:50; max-width:360px; padding:12px 15px; border-radius:10px; color:#fff; background:#203e3a; box-shadow:0 12px 30px rgba(0,0,0,.2); font-size:13px; opacity:0; transform:translateY(12px); pointer-events:none; transition:opacity 180ms ease, transform 180ms cubic-bezier(.23,1,.32,1); }
+    .toast.show { opacity:1; transform:translateY(0); }
+    .toast.error { background:#913b35; }
+    .help-card { margin-top:18px; padding:13px; border-left:3px solid #ddbd79; color:rgba(255,255,255,.86); background:rgba(8,49,45,.24); font-size:12px; }
+    .help-card strong { color:#fff; }
+    @media (max-width:960px) { .app-shell { grid-template-columns:1fr; } .sidebar { position:relative; height:auto; min-height:0; padding:23px 20px; } .main { padding:28px 20px 40px; } .filters { grid-template-columns:1fr; } .filter-actions { justify-content:flex-end; } }
+    @media (max-width:620px) { .main-header, .list-toolbar, .section-heading { align-items:flex-start; flex-direction:column; } .storage-card { width:100%; } .toolbar-actions { width:100%; } .toolbar-actions .button { flex:1; } .main-title h2 { font-size:32px; } .filters { padding:16px; } }
+    @media (prefers-reduced-motion:no-preference) { .month-chip { animation:chip-enter 180ms cubic-bezier(.23,1,.32,1) both; } @keyframes chip-enter { from { opacity:0; transform:translateY(5px); } to { opacity:1; transform:translateY(0); } } }
+    @media print { @page { margin:12mm; } body { background:#fff; font-size:10pt; } .sidebar, .month-panel, .filters, .storage-card, .toolbar-actions, .order-bar, .toast { display:none !important; } .app-shell { display:block; } .main { padding:0; } .main-header { margin:0 0 14px; } .main-title .eyebrow { margin-bottom:3px; } .main-title h2 { font-size:25pt; } .main-title p { font-size:10pt; } .list-panel { border:0; border-radius:0; box-shadow:none; } .list-toolbar { padding:0 0 10px; border-bottom:1px solid #777; } .list-summary { padding:8px 0; background:#fff; } .table-wrap { overflow:visible; } table { min-width:0; table-layout:fixed; } th { padding:7px 5px; background:#f3f3f3; font-size:8pt; } td { padding:8px 5px; } th:nth-child(1), td:nth-child(1) { width:25%; } th:nth-child(2), td:nth-child(2) { width:12.5%; } th:nth-child(3), td:nth-child(3) { width:12.5%; } th:nth-child(4), td:nth-child(4) { width:50%; } .phone-line { color:inherit; } .events { min-width:0; } .event { padding:2px 3px; border:0; font-size:8pt; } .badge { font-size:7pt; } }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" aria-label="Importação e armazenamento local">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <div><p>Registro local</p><h1>Acompanhamento<br>de Consultas</h1></div>
+      </div>
+      <section class="contact-card" aria-label="Contato de apoio">
+        <p class="eyebrow">Dúvidas sobre o programa?</p>
+        <p>Este programa é uma gentileza do agente comunitário de saúde Maico.</p>
+        <a href="tel:11978831938" aria-label="Ligar para Maico, número 11 978831938">Contato 11 978831938</a>
+      </section>
+      <section class="sidebar-section">
+        <p class="eyebrow">1. Importar um mês</p>
+        <h2>Cole a agenda copiada</h2>
+        <p class="sidebar-copy">Copie a tela do relatório da prefeitura — de um mês só ou de um período maior, como o ano inteiro — cole aqui e incorpore os agendamentos ao histórico.</p>
+        <textarea id="importText" spellcheck="false" aria-label="Cole aqui a cópia da tela de agendamento" placeholder="Cole aqui o conteúdo completo copiado da agenda..."></textarea>
+        <button class="button button-primary" id="importButton" type="button">Incorporar agenda</button>
+        <div class="help-card"><strong>Como funciona.</strong> Cada mês é identificado pela data de cada agendamento, então um único texto colado pode conter vários meses de uma vez. Se algum desses meses já existir, a versão armazenada será substituída para evitar duplicidades.</div>
+      </section>
+      <section class="sidebar-footer">
+        <p class="eyebrow">Armazenamento</p>
+        <button class="button button-subtle" id="clearTextButton" type="button">Limpar campo de colagem</button>
+        <button class="button button-danger" id="clearDataButton" type="button">Limpar todos os dados</button>
+        <div class="install-card" id="installCard">
+          <p><strong>Instale este app</strong> no seu celular ou computador para abrir como um programa, mesmo sem internet.</p>
+          <button class="button button-install" id="installButton" type="button">Instalar app</button>
+        </div>
+        <p class="privacy-note">Os registros ficam somente neste navegador, por meio do armazenamento local. Nada é enviado para a internet por esta página.</p>
+      </section>
+    </aside>
+
+    <main class="main">
+      <header class="main-header">
+        <div class="main-title">
+          <p class="eyebrow">Mesa de acompanhamento</p>
+          <h2>Histórico que deixa os retornos mais visíveis.</h2>
+          <p>Selecione as situações que exigem mais atenção e consulte, em uma única lista, as ocorrências registradas nos meses que você carregou.</p>
+        </div>
+        <div class="storage-card" aria-live="polite">
+          <span class="storage-dot"></span>
+          <div><strong id="storageCount">Nenhum mês</strong><span id="storageDetail">aguardando importação</span></div>
+        </div>
+      </header>
+
+      <section class="month-panel" aria-labelledby="monthsHeading">
+        <div class="section-heading"><div><h3 id="monthsHeading">Meses armazenados</h3><p>Estas fichas indicam quais períodos já foram incorporados.</p></div></div>
+        <div class="month-chips" id="monthChips"><span class="empty-months">Nenhum período carregado.</span></div>
+      </section>
+
+      <section class="filters" aria-label="Filtros da lista de acompanhamento">
+        <div class="filter-field">
+          <label for="statusFilter">Contém situação</label>
+          <select id="statusFilter">
+            <option value="TODAS">Todas as situações</option>
+            <option value="AGENDADO">AGENDADO</option>
+            <option value="ADMITIDO">ADMITIDO</option>
+            <option value="CANCELADO">CANCELADO</option>
+            <option value="TRANSFERIDO">TRANSFERIDO</option>
+            <option value="FALTOU">FALTOU</option>
+            <option value="AGENDA RESERVA">AGENDA RESERVA</option>
+            <option value="RESERVA CANCELADA">RESERVA CANCELADA</option>
+            <option value="RESERVADO">RESERVADO</option>
+            <option value="NÃO REALIZADO">NÃO REALIZADO</option>
+          </select>
+        </div>
+        <div class="filter-field">
+          <label for="lastStatusFilter">Última situação</label>
+          <select id="lastStatusFilter">
+            <option value="TODAS">Todas as situações</option>
+            <option value="AGENDADO">AGENDADO</option>
+            <option value="ADMITIDO">ADMITIDO</option>
+            <option value="CANCELADO">CANCELADO</option>
+            <option value="TRANSFERIDO">TRANSFERIDO</option>
+            <option value="FALTOU">FALTOU</option>
+            <option value="AGENDA RESERVA">AGENDA RESERVA</option>
+            <option value="RESERVA CANCELADA">RESERVA CANCELADA</option>
+            <option value="RESERVADO">RESERVADO</option>
+            <option value="NÃO REALIZADO">NÃO REALIZADO</option>
+          </select>
+        </div>
+        <div class="filter-field">
+          <label>Meses a mostrar</label>
+          <div class="month-selector" id="monthSelector"><span class="empty-months">Importe ao menos uma agenda para habilitar este filtro.</span></div>
+        </div>
+        <div class="filter-actions"><button class="button button-run" id="generateButton" type="button">Gerar lista</button></div>
+      </section>
+
+      <section class="list-panel" aria-labelledby="listHeading">
+        <div class="list-toolbar">
+          <div><h3 id="listHeading">Lista de acompanhamento</h3><p>Uma pessoa por linha, com a sequência de datas e situações encontradas.</p></div>
+          <div class="toolbar-actions"><button class="button button-outline" id="copyButton" type="button">Copiar lista</button><button class="button button-print" id="printButton" type="button">Imprimir</button></div>
+        </div>
+        <div class="order-bar" aria-label="Ordenação da lista">
+          <span class="order-label">Ordem</span>
+          <div class="order-options" id="orderOptions">
+            <button class="button button-outline order-btn active" data-order="alpha" type="button">Alfabética</button>
+            <button class="button button-outline order-btn" data-order="recent" type="button">Recentes</button>
+            <button class="button button-outline order-btn" data-order="old" type="button">Antigos</button>
+            <button class="button button-outline order-btn" data-order="frequent" type="button">Habitual</button>
+            <button class="button button-outline order-btn" data-order="infrequent" type="button">Inabitual</button>
+          </div>
+        </div>
+        <div class="list-summary" id="listSummary">Importe uma agenda e clique em “Gerar lista”.</div>
+        <div class="table-wrap" id="listContainer">
+          <div class="empty-list"><div class="empty-ficha"><strong>Ainda não há histórico para exibir.</strong>Cole a cópia de uma agenda mensal no campo à esquerda e incorpore os dados para abrir a primeira ficha.</div></div>
+        </div>
+      </section>
+    </main>
+  </div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script>
+    /* Prontuário de Mesa: processamento local, sem rede, com rastreabilidade por mês. */
+    (() => {
+      const STORAGE_KEY = 'acompanhamento-consultas-v1';
+      const STATUS = ['AGENDADO','ADMITIDO','CANCELADO','TRANSFERIDO','FALTOU','AGENDA RESERVA','RESERVA CANCELADA','RESERVADO','NÃO REALIZADO'];
+      let appState = loadState();
+      let generatedRows = [];
+      let toastTimer;
+      let currentOrder = 'alpha';
+
+      const $ = (id) => document.getElementById(id);
+      const esc = (value) => String(value ?? '').replace(/[&<>"']/g, (char) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[char]));
+
+      function loadState() {
+        try {
+          const parsed = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{"reports":[]}');
+          return { reports: Array.isArray(parsed.reports) ? parsed.reports : [] };
+        } catch (error) {
+          return { reports: [] };
+        }
+      }
+
+      function persist() { localStorage.setItem(STORAGE_KEY, JSON.stringify(appState)); }
+
+      function showToast(message, isError = false) {
+        const toast = $('toast');
+        toast.textContent = message;
+        toast.className = `toast${isError ? ' error' : ''} show`;
+        window.clearTimeout(toastTimer);
+        toastTimer = window.setTimeout(() => { toast.className = 'toast'; }, 4200);
+      }
+
+      function normaliseStatus(value) {
+        const text = String(value || '').trim().replace(/\s+/g, ' ').toUpperCase();
+        if (text.startsWith('CANCELADO')) return 'CANCELADO';
+        return STATUS.includes(text) ? text : text;
+      }
+
+      function parseDateTime(value) {
+        const match = String(value).match(/^(\d{2})-(\d{2})-(\d{4})\s+(\d{2}):(\d{2})(?:\s*-\s*\S+)?$/);
+        if (!match) return null;
+        const [, day, month, year, hour, minute] = match;
+        return { display: `${day}/${month}/${year} ${hour}:${minute}`, date: `${year}-${month}-${day}T${hour}:${minute}:00`, monthKey: `${year}-${month}` };
+      }
+
+      function labelMonth(monthKey) {
+        const [year, month] = monthKey.split('-').map(Number);
+        return new Intl.DateTimeFormat('pt-BR', { month:'long', year:'numeric' }).format(new Date(year, month - 1, 1)).replace(/^./, (letter) => letter.toUpperCase());
+      }
+
+      function cleanLines(text) {
+        return text.replace(/\r/g, '').split('\n').map((line) => line.replace(/\u00a0/g, ' ').trim()).filter(Boolean);
+      }
+
+      function firstUseful(lines, from) {
+        return lines.slice(from).find((line) => line && !/^\[?(CEL|RES|COM|TEL)/i.test(line)) || '';
+      }
+
+      function parseReport(text) {
+        const lines = cleanLines(text);
+        const rowIndexes = [];
+        lines.forEach((line, index) => { if (parseDateTime(line)) rowIndexes.push(index); });
+        const entries = [];
+        for (let position = 0; position < rowIndexes.length; position += 1) {
+          const start = rowIndexes[position];
+          const end = rowIndexes[position + 1] ?? lines.length;
+          const block = lines.slice(start, end);
+          const dateInfo = parseDateTime(block[0]);
+          const cnsIndex = block.findIndex((line) => /^\[CNS:\]/i.test(line));
+          const cpfIndex = block.findIndex((line) => /^\[CPF:\]/i.test(line));
+          if (!dateInfo || (cnsIndex === -1 && cpfIndex === -1)) continue;
+          const cns = cnsIndex >= 0 ? (block[cnsIndex].match(/\d+/g) || []).join('') : '';
+          const cpf = cpfIndex >= 0 ? (block[cpfIndex].match(/\d+/g) || []).join('') : '';
+          const identificationIndex = Math.max(cnsIndex, cpfIndex);
+          const patient = firstUseful(block, identificationIndex + 1);
+          if (!patient || /^\d+$/.test(patient) || patient === 'PSICÓLOGO') continue;
+          const numberIndex = block.findIndex((line, index) => index > identificationIndex && /^\d{3,}$/.test(line));
+          const citizenNumber = numberIndex >= 0 ? block[numberIndex] : '';
+          const phoneLines = block.filter((line) => /^\[?(CEL|RES|COM|TEL)/i.test(line));
+          const phones = phoneLines.join(' | ');
+          const statusRaw = block[2] || '';
+          const status = normaliseStatus(statusRaw);
+          if (!STATUS.includes(status)) continue;
+          entries.push({
+            id: `${dateInfo.date}|${cpf || cns || patient}|${status}|${block[1] || ''}`,
+            date: dateInfo.date,
+            dateDisplay: dateInfo.display,
+            monthKey: dateInfo.monthKey,
+            type: block[1] || '',
+            status,
+            statusOriginal: statusRaw,
+            agendaStatus: block[3] || '',
+            careLine: block[4] || '',
+            patient,
+            cns,
+            cpf,
+            citizenNumber,
+            phones
+          });
+        }
+        const monthKeys = [...new Set(entries.map((entry) => entry.monthKey))].sort();
+        if (!entries.length) throw new Error('Não foram encontrados agendamentos com usuário identificado. Confira se foi colado o relatório completo.');
+        const months = monthKeys.map((monthKey) => ({
+          monthKey,
+          entries: entries.filter((entry) => entry.monthKey === monthKey)
+        }));
+        return { months };
+      }
+
+      function getReports() { return [...appState.reports].sort((a, b) => a.monthKey.localeCompare(b.monthKey)); }
+      function getEntries() { return getReports().flatMap((report) => report.entries || []); }
+
+      function updateMonthViews() {
+        const reports = getReports();
+        const total = reports.reduce((sum, report) => sum + report.entries.length, 0);
+        $('storageCount').textContent = reports.length ? `${reports.length} ${reports.length === 1 ? 'mês armazenado' : 'meses armazenados'}` : 'Nenhum mês';
+        $('storageDetail').textContent = reports.length ? `${total} agendamentos identificados` : 'aguardando importação';
+        $('monthChips').innerHTML = reports.length ? reports.map((report) => `<span class="month-chip">${esc(labelMonth(report.monthKey))}<span class="chip-count">${report.entries.length}</span></span>`).join('') : '<span class="empty-months">Nenhum período carregado.</span>';
+        $('monthSelector').innerHTML = reports.length ? reports.map((report) => `<label class="month-option"><input type="checkbox" class="month-check" value="${esc(report.monthKey)}" checked> ${esc(labelMonth(report.monthKey))}</label>`).join('') : '<span class="empty-months">Importe ao menos uma agenda para habilitar este filtro.</span>';
+      }
+
+      function identityFor(entry) { return entry.citizenNumber ? `n:${entry.citizenNumber}` : entry.cpf ? `c:${entry.cpf}` : entry.cns ? `s:${entry.cns}` : `u:${entry.patient.toUpperCase()}`; }
+
+      function getSelectedMonths() {
+        return [...document.querySelectorAll('.month-check:checked')].map((input) => input.value);
+      }
+
+      function collectRows() {
+        const selectedMonths = getSelectedMonths();
+        const statusFilter = $('statusFilter').value;
+        const lastStatusFilter = $('lastStatusFilter').value;
+        const displayed = getEntries().filter((entry) => selectedMonths.includes(entry.monthKey));
+        const groups = new Map();
+        displayed.forEach((entry) => {
+          const key = identityFor(entry);
+          if (!groups.has(key)) groups.set(key, { patient:entry.patient, citizenNumber:entry.citizenNumber, cpf:entry.cpf, cns:entry.cns, phones:entry.phones, events:[] });
+          const person = groups.get(key);
+          person.events.push(entry);
+          if (!person.citizenNumber && entry.citizenNumber) person.citizenNumber = entry.citizenNumber;
+          if (!person.phones && entry.phones) person.phones = entry.phones;
+        });
+        const people = [...groups.values()].map((person) => ({ ...person, events:[...person.events].sort((a,b) => a.date.localeCompare(b.date)) }));
+        return people.filter((person) => {
+          const containsMatch = statusFilter === 'TODAS' || person.events.some((event) => event.status === statusFilter);
+          const lastStatus = person.events.at(-1)?.status;
+          const lastMatch = lastStatusFilter === 'TODAS' || lastStatus === lastStatusFilter;
+          return containsMatch && lastMatch;
+        });
+      }
+
+      function compareCitizen(a, b) {
+        const aNumber = a.citizenNumber ? Number(a.citizenNumber) : Infinity;
+        const bNumber = b.citizenNumber ? Number(b.citizenNumber) : Infinity;
+        return aNumber - bNumber;
+      }
+
+      function lastEventDate(person) { return person.events.at(-1)?.date || ''; }
+
+      function sortPeople(people, order) {
+        const comparators = {
+          alpha: (a, b) => a.patient.localeCompare(b.patient, 'pt-BR') || compareCitizen(a, b),
+          recent: (a, b) => lastEventDate(b).localeCompare(lastEventDate(a)) || a.patient.localeCompare(b.patient, 'pt-BR'),
+          old: (a, b) => lastEventDate(a).localeCompare(lastEventDate(b)) || a.patient.localeCompare(b.patient, 'pt-BR'),
+          frequent: (a, b) => (b.events.length - a.events.length) || lastEventDate(b).localeCompare(lastEventDate(a)) || compareCitizen(a, b),
+          infrequent: (a, b) => (a.events.length - b.events.length) || lastEventDate(b).localeCompare(lastEventDate(a)) || compareCitizen(a, b)
+        };
+        return [...people].sort(comparators[order] || comparators.alpha);
+      }
+
+      function statusClass(status) { return `status-${status.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/ /g, '-')}`; }
+
+      function phoneNumbers(value) {
+        return String(value || '').split('|').map((phone) => phone.replace(/\D/g, '')).filter(Boolean);
+      }
+
+      const ORDER_LABELS = { alpha:'ordem alfabética', recent:'mais recentes primeiro', old:'mais antigos primeiro', frequent:'mais habituais primeiro', infrequent:'menos habituais primeiro' };
+
+      function renderList() {
+        generatedRows = sortPeople(collectRows(), currentOrder);
+        const selectedMonths = getSelectedMonths();
+        const statusFilter = $('statusFilter').value;
+        const lastStatusFilter = $('lastStatusFilter').value;
+        const list = $('listContainer');
+        const filterParts = [];
+        if (statusFilter !== 'TODAS') filterParts.push(`contendo situação ${statusFilter}`);
+        if (lastStatusFilter !== 'TODAS') filterParts.push(`última situação ${lastStatusFilter}`);
+        const filterText = filterParts.length ? `, ${filterParts.join(' e ')}` : ', considerando todas as situações';
+        const orderText = `, em ${ORDER_LABELS[currentOrder] || ORDER_LABELS.alpha}`;
+        $('listSummary').textContent = `${generatedRows.length} ${generatedRows.length === 1 ? 'pessoa encontrada' : 'pessoas encontradas'} em ${selectedMonths.length || 0} ${selectedMonths.length === 1 ? 'mês selecionado' : 'meses selecionados'}${filterText}${orderText}.`;
+        if (!generatedRows.length) {
+          list.innerHTML = '<div class="empty-list"><div class="empty-ficha"><strong>Nenhuma pessoa encontrada com estes filtros.</strong>Selecione outros meses ou escolha uma situação diferente para abrir os registros correspondentes.</div></div>';
+          return;
+        }
+        const body = generatedRows.map((person) => {
+          const events = person.events.map((event) => `<span class="event"><span class="event-date">${esc(event.dateDisplay)}</span><span class="badge ${statusClass(event.status)}">${esc(event.status)}</span></span>`).join('');
+          const id = person.citizenNumber || 'Não informado';
+          const phones = phoneNumbers(person.phones);
+          const phoneCell = phones.length ? phones.map((phone) => `<a class="phone-line" href="https://wa.me/55${esc(phone)}" target="_blank" rel="noopener noreferrer">${esc(phone)}</a>`).join('') : '<span class="person-detail">Não identificado</span>';
+          return `<tr><td><span class="person-name">${esc(person.patient)}</span><span class="person-detail">CPF: ${esc(person.cpf || 'não identificado')}</span></td><td class="cell-id">${esc(id)}</td><td class="phone-cell">${phoneCell}</td><td><div class="events">${events}</div></td></tr>`;
+        }).join('');
+        list.innerHTML = `<table><thead><tr><th>Usuário da Saúde</th><th>Cadastro</th><th>Telefone</th><th>Data e situação</th></tr></thead><tbody>${body}</tbody></table>`;
+      }
+
+      function toClipboardText() {
+        const lines = [['Usuário da Saúde', 'Cadastro', 'CPF', 'Telefone', 'Histórico (data e situação)']];
+        generatedRows.forEach((person) => lines.push([
+          person.patient,
+          person.citizenNumber || '',
+          person.cpf || '',
+          phoneNumbers(person.phones).join(' | '),
+          person.events.map((event) => `${event.dateDisplay} — ${event.status}`).join(' | ')
+        ]));
+        return lines.map((row) => row.map((value) => String(value).replace(/[\t\n]/g, ' ')).join('\t')).join('\n');
+      }
+
+      async function copyList() {
+        if (!generatedRows.length) { showToast('Gere uma lista com resultados antes de copiar.', true); return; }
+        const text = toClipboardText();
+        try {
+          await navigator.clipboard.writeText(text);
+        } catch (error) {
+          const holder = document.createElement('textarea');
+          holder.value = text; document.body.appendChild(holder); holder.select(); document.execCommand('copy'); holder.remove();
+        }
+        showToast('Lista copiada em formato de tabela. Você pode colá-la em uma planilha ou documento.');
+      }
+
+      $('importButton').addEventListener('click', () => {
+        const rawText = $('importText').value.trim();
+        if (!rawText) { showToast('Cole primeiro a cópia da tela de agendamento.', true); return; }
+        try {
+          const { months } = parseReport(rawText);
+          const conflicts = months.filter((month) => appState.reports.some((item) => item.monthKey === month.monthKey));
+          if (conflicts.length) {
+            const names = conflicts.map((month) => labelMonth(month.monthKey)).join(', ');
+            const question = conflicts.length === 1
+              ? `Já existe uma agenda de ${names}. Deseja substituí-la pela cópia que acabou de colar?`
+              : `Já existem agendas de ${names}. Deseja substituí-las pela cópia que acabou de colar?`;
+            if (!window.confirm(question)) return;
+          }
+          const importedAt = new Date().toISOString();
+          months.forEach((month) => {
+            appState.reports = appState.reports.filter((item) => item.monthKey !== month.monthKey);
+            appState.reports.push({ monthKey:month.monthKey, entries:month.entries, importedAt });
+          });
+          persist(); $('importText').value = ''; updateMonthViews(); renderList();
+          const totalEntries = months.reduce((sum, month) => sum + month.entries.length, 0);
+          const monthNames = months.map((month) => labelMonth(month.monthKey)).join(', ');
+          const summary = months.length === 1
+            ? `${totalEntries} agendamentos de ${monthNames} foram incorporados.`
+            : `${totalEntries} agendamentos de ${months.length} meses (${monthNames}) foram incorporados.`;
+          showToast(summary);
+        } catch (error) { showToast(error.message || 'Não foi possível interpretar a cópia da agenda.', true); }
+      });
+      $('clearTextButton').addEventListener('click', () => { $('importText').value = ''; $('importText').focus(); });
+      $('clearDataButton').addEventListener('click', () => {
+        if (!appState.reports.length) { showToast('Não há dados armazenados para limpar.'); return; }
+        if (window.confirm('Deseja apagar todos os meses armazenados neste navegador? Esta ação não pode ser desfeita.')) {
+          appState = { reports:[] }; persist(); generatedRows = []; updateMonthViews(); renderList(); showToast('Todos os dados locais foram apagados.');
+        }
+      });
+      $('generateButton').addEventListener('click', renderList);
+      $('statusFilter').addEventListener('change', renderList);
+      $('lastStatusFilter').addEventListener('change', renderList);
+      $('monthSelector').addEventListener('change', renderList);
+      $('copyButton').addEventListener('click', copyList);
+      $('printButton').addEventListener('click', () => { if (!generatedRows.length) { showToast('Gere uma lista com resultados antes de imprimir.', true); return; } window.print(); });
+      $('orderOptions').addEventListener('click', (event) => {
+        const button = event.target.closest('.order-btn');
+        if (!button) return;
+        document.querySelectorAll('.order-btn').forEach((other) => other.classList.remove('active'));
+        button.classList.add('active');
+        currentOrder = button.dataset.order;
+        renderList();
+      });
+
+      updateMonthViews();
+      renderList();
+
+      // --- PWA: instalação e funcionamento offline ---
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('./sw.js').catch(() => {});
+        });
+      }
+
+      let deferredInstallPrompt = null;
+      window.addEventListener('beforeinstallprompt', (event) => {
+        event.preventDefault();
+        deferredInstallPrompt = event;
+        $('installCard').classList.add('ready');
+      });
+      window.addEventListener('appinstalled', () => {
+        deferredInstallPrompt = null;
+        $('installCard').classList.remove('ready');
+        showToast('App instalado. Você já pode abri-lo pelo ícone, mesmo sem internet.');
+      });
+      const installButton = $('installButton');
+      if (installButton) {
+        installButton.addEventListener('click', async () => {
+          if (!deferredInstallPrompt) return;
+          deferredInstallPrompt.prompt();
+          await deferredInstallPrompt.userChoice;
+          deferredInstallPrompt = null;
+          $('installCard').classList.remove('ready');
+        });
+      }
+    })();
+  </script>
+</body>
+</html>

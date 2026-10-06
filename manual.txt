@@ -1,0 +1,93 @@
+# Manual do Projeto: Acompanhamento de Consultas
+
+## Visão Geral
+Aplicativo **local-first** (PWA) para agentes comunitários de saúde acompanharem consultas médicas. O app roda 100% no navegador (ou WebView2 no MSIX), sem backend, sem internet, sem telemetria. Todos os dados ficam no `localStorage` do dispositivo.
+
+## Identidade do Pacote (Microsoft Partner Center)
+- **Package/Identity/Name**: `wavizo.SlSSAcompanhamentodeconsultas`
+- **Package/Identity/Publisher**: `CN=57BB464E-553F-45B6-A4ED-B253157408EB`
+- **Package/Properties/PublisherDisplayName**: `wavizo`
+- **Package Family Name (PFN)**: `wavizo.SlSSAcompanhamentodeconsultas_c5p81jb0en0bm`
+- **Package SID**: `S-1-15-2-4129138387-2334821746-3998454584-887326526-397364692-819623371-1943786192`
+- **Store ID**: `9NCM6HXTK486`
+
+## Estrutura do Projeto
+```
+C:\APPS\AcompanhamentoConsultas\
+├── index.html              # App principal (HTML/CSS/JS único, ~560 linhas)
+├── manifest.json           # Manifesto PWA (nome, ícones, cores, display standalone)
+├── sw.js                   # Service Worker (cache do app shell para offline)
+├── vercel.json             # Headers para deploy no Vercel
+├── netlify.toml            # Headers para deploy no Netlify
+├── README.md               # Documentação do PWA
+├── icons/                  # Ícones PWA (192, 512, maskable, apple-touch, favicons)
+├── example/                # Arquivos de teste (ignorar no MSIX)
+├── msix/
+│   ├── package/            # Pacote MSIX pronto para assinatura/submissão
+│   │   ├── AppxManifest.xml    # Manifesto MSIX (identidade, capabilities, assets)
+│   │   ├── PrivacyStatement.html # Declaração de privacidade (obrigatório na Store)
+│   │   ├── PrivacyNotice.txt     # Aviso curto de privacidade
+│   │   ├── AcompanhamentoConsultas.exe  # Host WebView2 (fullTrust)
+│   │   ├── AcompanhamentoConsultas.dll
+│   │   ├── *.deps.json, *.runtimeconfig.json, *.pdb
+│   │   ├── Microsoft.Web.WebView2.*.dll  # Runtime WebView2
+│   │   ├── runtimes/             # Runtimes nativos (x64, arm64)
+│   │   ├── wwwroot/              # App PWA copiado (index.html, manifest, sw.js, icons/)
+│   │   └── StoreAssets/          # Imagens da Store (logos, splash, tiles)
+│   └── unpacked/         # Versão descompactada para testes/debug
+```
+
+## Funcionamento do App
+1. **Importação**: Usuário copia/cola relatório da prefeitura (texto bruto) no textarea.
+2. **Parse**: JS extrai agendamentos por regex (data, CNS/CPF, paciente, telefone, situação).
+3. **Armazenamento**: Salva em `localStorage` chave `acompanhamento-consultas-v1` como JSON `{reports: [{monthKey, entries[], importedAt}]}`.
+4. **Filtros**: Por situação contida, última situação, meses selecionados.
+5. **Ordenação**: Alfabética, recentes, antigos, habituais, inabituais.
+6. **Saída**: Tabela copiável (TSV para planilha) e imprimível (CSS `@media print`).
+7. **PWA**: Instalável, offline via Service Worker, `display: standalone`.
+
+## Tecnologias
+- **Frontend**: HTML5, CSS3 (custom properties, grid, print styles), Vanilla JS (ES6+)
+- **PWA**: Web App Manifest, Service Worker (cache-first app shell)
+- **MSIX**: WebView2 (Edge Chromium embedded), `runFullTrust` capability
+- **Deploy PWA**: Netlify / Vercel (static hosting com HTTPS)
+
+## Declaração de Privacidade (Resumo)
+- **Nenhum dado sai do dispositivo**. Tudo em `localStorage` do WebView2/navegador.
+- Sem servidor, backend, cookies, telemetria, analytics, terceiros.
+- Dados: saúde, nomes, CNS, CPF, telefones, histórico — apenas importados pelo usuário.
+- Direitos: limpar campo, limpar todos os dados, desinstalar remove tudo.
+- Contato: Maico (ACS) — 11 97883-1938.
+
+## Capabilities MSIX
+- `internetClient` — necessário para WebView2 (mesmo que app não use rede)
+- `runFullTrust` — host .NET executável que carrega o WebView2
+
+## Assets da Store (StoreAssets/)
+- StoreLogo.png (50x50) — logo da loja
+- Square150x150Logo.png — tile médio
+- Square44x44Logo.png — tile pequeno / lista
+- SmallLogo.png — tile pequeno / barra de tarefas
+- Wide310x150Logo.png — tile largo
+- SplashScreen.png — tela de splash
+
+## Versionamento
+- AppxManifest.xml: Version="1.0.0.0"
+- PWA Cache: `acompanhamento-consultas-v1` (atualizar ao mudar app shell)
+
+## Comandos Úteis
+```bash
+# Testar PWA localmente (precisa HTTPS ou localhost)
+python3 -m http.server 8080
+# ou
+npx serve .
+
+# Gerar MSIX (precisa MakeAppx.exe e certificado)
+# MakeAppx pack /d "msix\package" /p "AcompanhamentoConsultas.msix"
+# SignTool sign /fd SHA256 /a /f cert.pfx /p senha "AcompanhamentoConsultas.msix"
+```
+
+## Contato / Autor
+- Desenvolvido por: Maico (Agente Comunitário de Saúde)
+- Telefone: 11 97883-1938
+- Publisher: wavizo (CN=57BB464E-553F-45B6-A4ED-B253157408EB)

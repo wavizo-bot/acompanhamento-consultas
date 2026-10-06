@@ -1,0 +1,26 @@
+# Binários e build MSIX
+msix/package/*.exe
+msix/package/*.dll
+msix/package/*.pdb
+msix/package/*.deps.json
+msix/package/*.runtimeconfig.json
+msix/package/runtimes/
+msix/package/Microsoft.Web.WebView2.*
+
+# Descompactado para teste
+msix/unpacked/
+
+# Arquivos de exemplo/teste
+example/
+
+# IDE/OS
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+
+# Node (se houver)
+node_modules/
