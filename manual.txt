@@ -83,9 +83,35 @@ python3 -m http.server 8080
 npx serve .
 
 # Gerar MSIX (precisa MakeAppx.exe e certificado)
-# MakeAppx pack /d "msix\package" /p "AcompanhamentoConsultas.msix"
-# SignTool sign /fd SHA256 /a /f cert.pfx /p senha "AcompanhamentoConsultas.msix"
+"C:\Program Files (x86)\Windows Kits\10\bin\10.0.26100.0\x64\makeappx.exe" pack /d "msix\package" /p "AcompanhamentoConsultas.msix"
+"C:\Program Files (x86)\Windows Kits\10\bin\10.0.26100.0\x64\signtool.exe" sign /fd SHA256 /a /f cert.pfx /p senha "AcompanhamentoConsultas.msix"
+
+# Verificar MSIX
+"C:\Program Files (x86)\Windows Kits\10\bin\10.0.26100.0\x64\makeappx.exe" unpack /p "AcompanhamentoConsultas.msix" /d "msix\verify"
+
+# Instalar localmente (teste)
+Add-AppxPackage -Path "AcompanhamentoConsultas.msix"
 ```
+
+## MSIX Gerado (2026-10-06)
+- **Arquivo**: `AcompanhamentoConsultas.msix` (~3.2 MB, raiz do projeto)
+- **Assinatura**: Certificado auto-assinado `CN=57BB464E-553F-45B6-A4ED-B253157408EB` (thumbprint BBFCBD8E0FA9244155D7C451B613A0E8C73EF2ED)
+- **Conteúdo verificado**: 33 arquivos (AppxManifest, .exe/.dll, WebView2 runtimes x64/x86/arm64, wwwroot PWA, StoreAssets, PrivacyStatement.html, PrivacyNotice.txt)
+- **Certificado PFX**: `msix/package/cert.pfx` (senha: 123456) — **apenas para teste local**
+
+## Checklist Microsoft Partner Center — O que FALTA para submissão
+
+| Item | Status | Ação Necessária |
+|------|--------|-----------------|
+| Certificado de assinatura válido (CA confiável) | ❌ | Comprar certificado Code Signing (DigiCert, GlobalSign, Sectigo) com Subject `CN=57BB464E-553F-45B6-A4ED-B253157408EB` |
+| URL da Política de Privacidade online | ❌ | Hospedar `PrivacyStatement.html` (ex: GitHub Pages, site próprio) e informar URL no Partner Center |
+| Screenshots da Store (desktop) | ❌ | Capturar 1-8 screenshots (1366x768 ou 1920x1080) |
+| Descrição completa da Store (PT-BR) | ❌ | Preencher no Partner Center: nome, descrição curta/longa, recursos |
+| Classificação etária (IARC/ESRB) | ❌ | Questionário IARC no Partner Center (provavelmente 3+ ou 12+) |
+| Palavras-chave / Categorias | ❌ | Saúde, Produtividade, Médico |
+| Termos de uso / EULA | ⚠️ Opcional | Criar se desejar |
+| Teste em máquina limpa | ❌ | `Add-AppxPackage`, validar: abre offline, importa dados, filtra, ordena, copia TSV, imprime, PWA instala |
+| Notas de versão (Release Notes) | ❌ | "Versão 1.0.0.0 — Lançamento inicial" |
 
 ## Contato / Autor
 - Desenvolvido por: Maico (Agente Comunitário de Saúde)

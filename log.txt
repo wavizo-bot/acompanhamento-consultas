@@ -74,6 +74,48 @@
 
 ---
 
+## O que foi feito em 2026-10-06 (continuação)
+
+### 5. Geração do `AcompanhamentoConsultas.msix`
+- `MakeAppx.exe` empacotou `msix/package/` (33 arquivos) → `AcompanhamentoConsultas.msix` (~3.2 MB)
+- Inclui: AppxManifest.xml, executável x64, WebView2 runtimes (x64, x86, arm64), wwwroot PWA completo, StoreAssets, PrivacyStatement.html, PrivacyNotice.txt
+- Certificado auto-assinado criado: `CN=57BB464E-553F-45B6-A4ED-B253157408EB` (thumbprint BBFCBD8E0FA9244155D7C451B613A0E8C73EF2ED)
+- `SignTool.exe` assinou com SHA256 → `AppxSignature.p7x` + `AppxMetadata/CodeIntegrity.cat` no pacote
+- Verificado com `makeappx unpack` — todos os 33 arquivos extraídos corretamente
+
+### 6. Atualização do GitHub
+- Commit adicionado com MSIX gerado (não versionado, apenas log)
+- Push forçado para `wavizo-bot/acompanhamento-consultas.git`
+
+---
+
+## Requisitos Microsoft Partner Center — Status
+
+| Requisito | Status | Observação |
+|-----------|--------|------------|
+| Package Identity Name | ✅ | `wavizo.SlSSAcompanhamentodeconsultas` |
+| Publisher CN | ✅ | `CN=57BB464E-553F-45B6-A4ED-B253157408EB` |
+| Publisher Display Name | ✅ | `wavizo` |
+| Package Family Name | ✅ | `wavizo.SlSSAcompanhamentodeconsultas_c5p81jb0en0bm` |
+| Package SID | ✅ | `S-1-15-2-4129138387-...` |
+| Store ID | ✅ | `9NCM6HXTK486` |
+| AppxManifest.xml válido | ✅ | Identity, capabilities, assets, desktop extension |
+| Declaração de Privacidade | ✅ | `PrivacyStatement.html` + `PrivacyNotice.txt` no pacote |
+| Assets da Store | ✅ | 6 imagens em `StoreAssets/` (logos, splash, tiles) |
+| Arquitetura x64 | ✅ | Binários x64, manifest `ProcessorArchitecture="x64"` |
+| Capability `runFullTrust` | ✅ | Necessária para host WebView2 .NET |
+| Capability `internetClient` | ✅ | WebView2 requer (mesmo app offline) |
+| Certificado de assinatura confiável | ⚠️ **PENDENTE** | Auto-assinado serve para teste; **Store exige certificado de CA confiável (DigiCert, GlobalSign, etc.) com mesmo Publisher CN** |
+| Idade mínima / classificação etária | ⚠️ **PENDENTE** | Definir no Partner Center (provavelmente 3+ ou 12+) |
+| Screenshots da Store | ⚠️ **PENDENTE** | Mínimo 1, máx 8 por dispositivo (desktop, tablet) |
+| Descrição completa da Store | ⚠️ **PENDENTE** | PT-BR + outros idiomas se desejar |
+| Palavras-chave / categorias | ⚠️ **PENDENTE** | Saúde, Produtividade, Médico |
+| Política de privacidade online (URL) | ⚠️ **PENDENTE** | Partner Center pede URL; pode hospedar `PrivacyStatement.html` em GitHub Pages ou site próprio |
+| Termos de uso / EULA | ⚠️ **PENDENTE** | Opcional mas recomendado |
+| Teste em dispositivo limpo | ⚠️ **PENDENTE** | Instalar via `Add-AppxPackage`, validar funcionamento offline, PWA, impressão, cópia |
+
+---
+
 ## Arquivos essenciais para o repositório GitHub
 ```
 index.html
