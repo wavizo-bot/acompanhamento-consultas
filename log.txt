@@ -56,6 +56,41 @@ Data: 2026-10-06
 
 ---
 
+## Sessão 2026-10-06 (DisplayName rejeitado pelo Partner Center)
+
+### Pedido do dono
+- Erro da Store: manifesto usava DisplayName "Acompanhamento de Consultas",
+  que não é nome reservado do produto 9NCM6HXTK486.
+- Dono informou o nome reservado: "SlSS Acompanhamento de consultas"
+  (também confirmou as identidades Name/Publisher/PublisherDisplayName/PFN/
+  SID/Store ID e o tipo "Aplicativo MSIX ou PWA").
+
+### Feito (sucesso)
+1. Tentada consulta pública da Store (apps.microsoft.com/detail/9NCM6HXTK486)
+   → HTTP 410 (esperado: produto ainda não publicado, nome só visível no
+   Partner Center do dono).
+2. `msix/package/AppxManifest.xml`: Properties/DisplayName e
+   VisualElements/DisplayName → "SlSS Acompanhamento de consultas" (exato).
+3. Rebuild: makeappx pack + sign (wavizo-test.pfx) → AcompanhamentoConsultas.msix
+   (~689 KB), cópia sincronizada em msix/. Unpack confirmou o DisplayName novo
+   no pacote; assinatura presente com Subject = Publisher CN.
+4. manual.txt atualizado com o nome reservado; este log atualizado; push normal
+   (sem force) p/ main + master.
+
+### Por presunção minha
+1. Mantive o `manifest.json` do PWA como "Acompanhamento de Consultas" — a
+   reserva de nome só vale p/ o MSIX/Store, não p/ o nome de instalação do PWA.
+   Se o dono quiser uniformizar, é só pedir.
+2. Importei wavizo-test.cer em Cert:\CurrentUser\TrustedPeople (sem admin não
+   dá p/ LocalMachine) — ajuda na verificação local, mas o teste de instalação
+   via Add-AppxPackage continua pendente de máquina com o cert na máquina
+   (admin) ou do upload à Store (que reassina com cert oficial).
+
+### Deu errado / limitação
+1. `signtool verify /pa` acusa cert não confiável e `Import-Certificate` p/
+   LocalMachine\TrustedPeople deu Acesso negado (sem elevação). Esperado p/
+   cert auto-assinado; NÃO bloqueia o upload ao Partner Center.
+
 ## Sessão 2026-10-06 (noite) — rebuild + GitHub limpo
 
 ### O que deu certo

@@ -11,7 +11,7 @@
             ProcessorArchitecture="x64" />
 
   <Properties>
-    <DisplayName>Acompanhamento de Consultas</DisplayName>
+    <DisplayName>SlSS Acompanhamento de consultas</DisplayName>
     <PublisherDisplayName>wavizo</PublisherDisplayName>
     <Logo>StoreAssets\StoreLogo.png</Logo>
     <Description>Registro local de agendas mensais com lista de acompanhamento, filtros por situacao e ordenacao, sem envio de dados para a internet.</Description>
@@ -29,7 +29,7 @@
     <Application Id="App"
                  Executable="AcompanhamentoConsultas.exe"
                  EntryPoint="AcompanhamentoConsultas.Program">
-      <uap:VisualElements DisplayName="Acompanhamento de Consultas"
+      <uap:VisualElements DisplayName="SlSS Acompanhamento de consultas"
                           Square150x150Logo="StoreAssets\Square150x150Logo.png"
                           Square44x44Logo="StoreAssets\Square44x44Logo.png"
                           Description="Registro local de agendas mensais com lista de acompanhamento."

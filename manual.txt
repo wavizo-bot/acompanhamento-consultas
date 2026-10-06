@@ -17,6 +17,10 @@ Microsoft Store / Partner Center.
 Package/Identity/Name ......... wavizo.SlSSAcompanhamentodeconsultas
 Package/Identity/Publisher .... CN=57BB464E-553F-45B6-A4ED-B253157408EB
 Properties/PublisherDisplayName  wavizo
+Properties/DisplayName (NOME RESERVADO na Store) ... SlSS Acompanhamento de consultas
+  (exato, case-sensitive — Properties/DisplayName e VisualElements/DisplayName
+  usam este valor; "Acompanhamento de Consultas" foi REJEITADO pelo Partner
+  Center em 2026-10-06 por não ser nome reservado do produto 9NCM6HXTK486)
 Package Family Name (PFN) ..... wavizo.SlSSAcompanhamentodeconsultas_c5p81jb0en0bm
 Package SID ................... S-1-15-2-4129138387-2334821746-3998454584-887326526-397364692-819623371-1943786192
 Store ID ...................... 9NCM6HXTK486
