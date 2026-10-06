@@ -14,7 +14,7 @@
     <DisplayName>SlSS Acompanhamento de consultas</DisplayName>
     <PublisherDisplayName>wavizo</PublisherDisplayName>
     <Logo>StoreAssets\StoreLogo.png</Logo>
-    <Description>Registro local de agendas mensais com lista de acompanhamento, filtros por situacao e ordenacao, sem envio de dados para a internet.</Description>
+    <Description>App para agentes de saúde acompanharem consultas: importa a agenda, filtra por situação, ordena e imprime. Tudo fica só neste dispositivo, sem internet.</Description>
   </Properties>
 
   <Resources>
@@ -32,7 +32,7 @@
       <uap:VisualElements DisplayName="SlSS Acompanhamento de consultas"
                           Square150x150Logo="StoreAssets\Square150x150Logo.png"
                           Square44x44Logo="StoreAssets\Square44x44Logo.png"
-                          Description="Registro local de agendas mensais com lista de acompanhamento."
+                           Description="App para agentes de saúde acompanharem consultas: importa a agenda, filtra por situação, ordena e imprime."
                           BackgroundColor="#164b47">
         <uap:DefaultTile Wide310x150Logo="StoreAssets\Wide310x150Logo.png" />
         <uap:SplashScreen BackgroundColor="#164b47"
