@@ -56,12 +56,59 @@ Data: 2026-10-06
 
 ---
 
-## O que foi feito a pedido do usuário
+## Sessão 2026-10-06 (noite) — rebuild + GitHub limpo
 
-1. ✅ Criar `manual.txt` na raiz com documentação centralizada
-2. ✅ Criar `log.txt` na raiz com registro de ações
-3. ✅ Colocar arquivos essenciais no GitHub `wavizo-bot/acompanhamento-consultas.git` (apagando o que estiver lá)
-4. ✅ Incluir declaração de privacidade (já existe em `msix/package/PrivacyStatement.html` e `PrivacyNotice.txt`)
+### O que deu certo
+1. Validado AppxManifest.xml contra os dados do dono: Name, Publisher,
+   PublisherDisplayName conferem; PFN/SID/Store ID anotados no manual.
+2. Confirmado wwwroot/ idêntico à raiz (fc sem diferenças em index.html,
+   manifest.json, sw.js).
+3. Detectado que o .msix da raiz estava obsoleto (manifest sem internetClient)
+   e com assinatura de cert errado → rebuild completo:
+   makeappx pack (33 arquivos payload) + sign com NOVO cert de teste
+   (CN exato do Publisher, thumbprint 28C1FE09DEE3FEAD24B8E25D4AC0E7B160CF9500,
+   senha wavizo-test-2026, validade até 2027-10-06).
+4. Verificado: `signtool verify /pa /v` OK (Issued to = Publisher CN);
+   `makeappx unpack` extrai 36 arquivos (payload + assinatura + metadata).
+5. `privacy.html` criado na raiz (cópia do PrivacyStatement) p/ hospedar a URL
+   pedida pelo Partner Center.
+6. `build_msix.bat` reescrito: xcopy PWA→wwwroot + pack + sign + backup.
+7. `.gitignore` ajustado: ignora *.msix, *.pfx/*.cer, mantém !log.txt.
+8. manual.txt reescrito (fonte central de contexto) e este log atualizado.
+9. GitHub substituído: `master` limpa com --force sobre `master` e `main`
+   (apaga estrutura antiga C#/wwwroot da branch main, a pedido do dono).
+
+### O que deu errado
+1. Senha do PFX antigo (msix/wavizo.pfx) desconhecida — tentativas com
+   123456 falharam; `certutil -dump msix/wavizo.cer` revelou Subject "CN=Wavizo"
+   (errado), então o cert foi abandonado em vez de recuperado.
+2. `git log origin/main` falhou no 1º try (remote branch ainda não feito fetch);
+   resolvido com `git fetch origin '+refs/heads/*:refs/remotes/origin/*'`,
+   que revelou a divergência main × master.
+
+### Por presunção minha
+1. Novo cert de teste com o CN exato do Publisher (em vez de reutilizar o
+   antigo) + senha documentada no .bat e no manual.
+2. `privacy.html` na raiz (não pedido explicitamente, mas necessário p/ a URL
+   de privacidade da Store).
+3. Binários (.msix/.exe/.dll/.pfx) FORA do git — repo só com fontes; quem
+   precisar do instalador roda build_msix.bat.
+4. Sincronizei a cópia msix/AcompanhamentoConsultas.msix com o build novo
+   (antes estava 2 KB diferente da raiz).
+5. Unificação das branches: force-push da master limpa sobre main e master.
+6. Estrutura/idioma do manual.txt e deste log (escolha minha).
+7. MaxVersionTested mantido em 10.0.22621.0 (estava 26100.0 no commit, 22621.0
+   no working copy; 22621 = Win11 22H2, valor conservador e válido).
+
+### A pedido do dono
+1. Transformar o PWA em MSIX com as identidades informadas (Name, Publisher,
+   PublisherDisplayName, PFN, SID, Store ID).
+2. Incluir declaração de privacidade (PrivacyStatement.html + PrivacyNotice.txt
+   no pacote + privacy.html na raiz).
+3. manual.txt na raiz (contexto central p/ conversas futuras).
+4. log.txt na raiz (certo/errado/presunção/pedido).
+5. GitHub https://github.com/wavizo-bot/acompanhamento-consultas.git com os
+   arquivos essenciais, apagando o que estava lá (--force nas 2 branches).
 
 ---
 

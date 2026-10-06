@@ -7,8 +7,14 @@ msix/package/*.runtimeconfig.json
 msix/package/runtimes/
 msix/package/Microsoft.Web.WebView2.*
 
-# Descompactado para teste
+# Build MSIX (artefato gerado localmente, nao versionar)
+*.msix
 msix/unpacked/
+
+# Certificados (chave privada de teste local, nao versionar)
+*.pfx
+*.cer
+*.pvk
 
 # Arquivos de exemplo/teste
 example/
@@ -20,6 +26,7 @@ Thumbs.db
 
 # Logs
 *.log
+!log.txt
 npm-debug.log*
 
 # Node (se houver)

@@ -1,132 +1,145 @@
-Manual do Projeto: Acompanhamento de Consultas
-==================================================
+MANUAL DO PROJETO — Acompanhamento de Consultas (PWA → MSIX → Microsoft Store)
+==============================================================================
+Última atualização: 2026-10-06. Idioma: PT-BR. Este arquivo é a fonte central
+de contexto: se o dono perguntar deste projeto no futuro, comece daqui.
 
-Visão Geral
------------
-Aplicativo **local-first** (PWA) para agentes comunitários de saúde acompanharem consultas médicas. O app roda 100% no navegador (ou WebView2 no MSIX), sem backend, sem internet, sem telemetria. Todos os dados ficam no `localStorage` do dispositivo.
+1. O QUE É
+----------
+PWA local-first (100% frontend, sem backend) para um agente comunitário de
+saúde (Maico, tel 11 97883-1938) acompanhar consultas. O usuário cola o texto
+do relatório da prefeitura, o JS faz parse e guarda tudo no localStorage do
+navegador/WebView2. Filtros por situação, ordenações, cópia em TSV e impressão.
+Depois empacotado como MSIX (host .NET + WebView2) para distribuir via
+Microsoft Store / Partner Center.
 
-Identidade do Pacote (Microsoft Partner Center)
------------------------------------------------
-- **Package/Identity/Name**: `wavizo.SlSSAcompanhamentodeconsultas`
-- **Package/Identity/Publisher**: `CN=57BB464E-553F-45B6-A4ED-B253157408EB`
-- **Package/Properties/PublisherDisplayName**: `wavizo`
-- **Package Family Name (PFN)**: `wavizo.SlSSAcompanhamentodeconsultas_c5p81jb0en0bm`
-- **Package SID**: `S-1-15-2-4129138387-2334821746-3998454584-887326526-397364692-819623371-1943786192`
-- **Store ID**: `9NCM6HXTK486`
+2. IDENTIDADE OFICIAL (Partner Center — NÃO MUDAR)
+--------------------------------------------------
+Package/Identity/Name ......... wavizo.SlSSAcompanhamentodeconsultas
+Package/Identity/Publisher .... CN=57BB464E-553F-45B6-A4ED-B253157408EB
+Properties/PublisherDisplayName  wavizo
+Package Family Name (PFN) ..... wavizo.SlSSAcompanhamentodeconsultas_c5p81jb0en0bm
+Package SID ................... S-1-15-2-4129138387-2334821746-3998454584-887326526-397364692-819623371-1943786192
+Store ID ...................... 9NCM6HXTK486
+AppxManifest Version .......... 1.0.0.0, arch x64, TargetDeviceFamily
+                                Windows.Desktop, Min 10.0.19041.0, MaxTested 10.0.22621.0
+Capabilities .................. internetClient (exigido pelo WebView2) +
+                                rescap:runFullTrust (host .NET)
+Recursos ...................... pt-BR. DisplayName "Acompanhamento de Consultas".
 
-Estrutura do Projeto
---------------------
-```
-C:\APPS\AcompanhamentoConsultas\
-├── index.html              # App principal (HTML/CSS/JS único, ~560 linhas)
-├── manifest.json           # Manifesto PWA (nome, ícones, cores, display standalone)
-├── sw.js                   # Service Worker (cache do app shell para offline)
-├── vercel.json             # Headers para deploy no Vercel
-├── netlify.toml            # Headers para deploy no Netlify
-├── README.md               # Documentação do PWA
-├── icons/                  # Ícones PWA (192, 512, maskable, apple-touch, favicons)
-├── example/                # Arquivos de teste (ignorar no MSIX)
-├── msix/
-│   ├── package/            # Pacote MSIX pronto para assinatura/submissão
-│   │   ├── AppxManifest.xml    # Manifesto MSIX (identidade, capabilities, assets)
-│   │   ├── PrivacyStatement.html # Declaração de privacidade (obrigatório na Store)
-│   │   ├── PrivacyNotice.txt     # Aviso curto de privacidade
-│   │   ├── AcompanhamentoConsultas.exe  # Host WebView2 (fullTrust)
-│   │   ├── AcompanhamentoConsultas.dll
-│   │   ├── *.deps.json, *.runtimeconfig.json, *.pdb
-│   │   ├── Microsoft.Web.WebView2.*.dll  # Runtime WebView2
-│   │   ├── runtimes/             # Runtimes nativos (x64, arm64)
-│   │   ├── wwwroot/              # App PWA copiado (index.html, manifest, sw.js, icons/)
-│   │   └── StoreAssets/          # Imagens da Store (logos, splash, tiles)
-│   └── unpacked/         # Versão descompactada para testes/debug
-```
+3. MAPA DE ARQUIVOS (o que é fonte, o que é gerado)
+----------------------------------------------------
+RAIZ = fonte da verdade do PWA:
+  index.html ............ app inteiro (HTML+CSS+JS, ~560 linhas)
+  manifest.json ......... manifesto PWA (standalone, pt-BR, icons/)
+  sw.js ................. service worker, cache "acompanhamento-consultas-v1"
+  icons/ ................ 7 PNGs (192, 512, maskable x2, apple-touch, favicon 32/64)
+  vercel.json / netlify.toml  headers p/ deploy estático (sw.js sem cache)
+  privacy.html .......... CÓPIA de msix/package/PrivacyStatement.html, fica na
+                          raiz p/ poder hospedar (GitHub Pages) e informar a URL
+                          da política de privacidade no Partner Center
+  README.md ............. docs do PWA (deploy Netlify/Vercel)
+  build_msix.bat ........ script de build: espelha PWA → wwwroot, makeappx pack,
+                          signtool sign, copia backup p/ msix/
+  manual.txt (este) ..... contexto central | log.txt ......... diário de bordo
+  .gitignore ............ EXCLUI do git: *.msix, *.pfx/*.cer, example/,
+                          msix/unpacked/, binários do package (.exe/.dll/.pdb/
+                          runtimes/WebView2). log.txt é exceção explícita (!log.txt).
 
-Funcionamento do App
---------------------
-1. **Importação**: Usuário copia/cola relatório da prefeitura (texto bruto) no textarea.
-2. **Parse**: JS extrai agendamentos por regex (data, CNS/CPF, paciente, telefone, situação).
-3. **Armazenamento**: Salva em `localStorage` chave `acompanhamento-consultas-v1` como JSON `{reports: [{monthKey, entries[], importedAt}]}`.
-4. **Filtros**: Por situação contida, última situação, meses selecionados.
-5. **Ordenação**: Alfabética, recentes, antigos, habituais, inabituais.
-6. **Saída**: Tabela copiável (TSV para planilha) e imprimível (CSS `@media print`).
-7. **PWA**: Instalável, offline via Service Worker, `display: standalone`.
+MSIX:
+  msix/package/AppxManifest.xml ... manifesto CANÔNICO (usar este; não o de unpacked)
+  msix/package/PrivacyStatement.html + PrivacyNotice.txt ... PRIVACIDADE (obrig.
+      p/ certificação Store). Também espelhado em privacy.html na raiz.
+  msix/package/StoreAssets/ ... 6 PNGs da Store (StoreLogo, Square150, Square44,
+      SmallLogo, Wide310x150, SplashScreen)
+  msix/package/wwwroot/ ... ESPELHO do PWA (index.html, manifest.json, sw.js,
+      icons/). build_msix.bat sincroniza via xcopy. Verificado idêntico (fc).
+  msix/package/*.exe,*.dll,runtimes/ ... host .NET WebView2 compilado (x64) +
+      WebView2Loader (x64/x86/arm64). NÃO versionados (binário local).
+  msix/wavizo-test.pfx/.cer ... cert AUTO-ASSINADO de TESTE, Subject EXATO
+      CN=57BB464E-553F-45B6-A4ED-B253157408EB, senha "wavizo-test-2026",
+      validade 2026-10-06→2027-10-06. NÃO versionado. Serve p/ teste local
+      (Add-AppxPackage). A Store dispensa: Partner Center assina com o cert
+      oficial no upload.
+  msix/wavizo.pfx/.cer ... cert ANTIGO, Subject "CN=Wavizo" (ERRADO — não bate
+      com o Publisher; mantido só p/ histórico local, não usar, não versionar).
+  AcompanhamentoConsultas.msix (raiz) + msix/AcompanhamentoConsultas.msix ...
+      ARTEFATOS de build (~689 KB, assinados teste). NÃO versionados.
 
-Tecnologias
------------
-- **Frontend**: HTML5, CSS3 (custom properties, grid, print styles), Vanilla JS (ES6+)
-- **PWA**: Web App Manifest, Service Worker (cache-first app shell)
-- **MSIX**: WebView2 (Edge Chromium embedded), `runFullTrust` capability
-- **Deploy PWA**: Netlify / Vercel (static hosting com HTTPS)
+PASTAS IGNORADAS (existem local, fora do git): example/ (test1/test2.txt ~1,2 MB
+de massa de teste p/ colar no app), msix/unpacked/ (extração antiga p/ debug).
 
-Declaração de Privacidade (Resumo)
-----------------------------------
-- **Nenhum dado sai do dispositivo**. Tudo em `localStorage` do WebView2/navegador.
-- Sem servidor, backend, cookies, telemetria, analytics, terceiros.
-- Dados: saúde, nomes, CNS, CPF, telefones, histórico — apenas importados pelo usuário.
-- Direitos: limpar campo, limpar todos os dados, desinstalar remove tudo.
-- Contato: Maico (ACS) — 11 97883-1938.
+4. COMO O APP FUNCIONA (p/ explicar sem reler código)
+------------------------------------------------------
+- Parse (parseReport): cada bloco começa numa data DD-MM-AAAA HH:MM; exige
+  [CNS:] ou [CPF:]; paciente = primeira linha útil após identificação; ignora
+  linhas só-numéricas e "PSICÓLOGO"; status normalizado p/ 9 valores
+  (AGENDADO, ADMITIDO, CANCELADO, TRANSFERIDO, FALTOU, AGENDA RESERVA, RESERVA
+  CANCELADA, RESERVADO, NÃO REALIZADO); agrupa por mês (monthKey AAAA-MM).
+- Estado: localStorage chave "acompanhamento-consultas-v1" =
+  {reports:[{monthKey, entries[], importedAt}]}. Reimportar mês existente =
+  SUBSTITUI (confirm). Sem migração de schema.
+- Lista: agrupa por pessoa (nº cadastro > CPF > CNS > nome), filtros "contém
+  situação" + "última situação" + meses marcados; 5 ordens (alfabética, recentes,
+  antigos, habitual, inabitual); telefones viram links wa.me/55<num>; copiar =
+  TSV p/ planilha; imprimir = CSS @media print (só a tabela).
+- PWA: install prompt (beforeinstallprompt → botão), SW cache-first do app shell,
+  exige HTTPS/localhost (não file://).
 
-Capabilities MSIX
------------------
-- `internetClient` — necessário para WebView2 (mesmo que app não use rede)
-- `runFullTrust` — host .NET executável que carrega o WebView2
+5. HISTÓRICO DE DECISÕES / ARMADILHAS (ler antes de mexer)
+----------------------------------------------------------
+a) Havia DOIS AppxManifest.xml (package/ x unpacked/). O de package/ é o
+   canônico (StoreAssets, x64, desktop:FullTrustProcess). O de unpacked/ era
+   velho (icons/, neutral, cap extra). Pasta unpacked/ foi abandonada.
+b) Faltava capability internetClient (WebView2 exige mesmo offline) e o
+   namespace rescap estava como ".../rescap" em vez de
+   ".../restrictedcapabilities". Corrigido em 2026-10-06 e reempacotado.
+c) O .msix antigo estava assinado com cert CN=Wavizo ≠ Publisher → assinatura
+   INVÁLIDA p/ instalação. Gerado wavizo-test.pfx com o CN exato e rebuildado;
+   signtool verify OK, Publisher bate.
+d) Repo GitHub tinha DUAS branches divergentes: master (PWA+MSIX fonte, certa)
+   e main (estrutura antiga C#/wwwroot + .msix binário). Em 2026-10-06 a master
+   limpa foi forçada sobre AMBAS (main e master idênticas).
+e) Binários (.msix, .exe, .dll, .pfx) NÃO vão p/ o git — repo = só fontes. Quem
+   precisar do .msix roda build_msix.bat.
+f) Política de privacidade existe em 3 lugares intencionais: PrivacyStatement.
+   html + PrivacyNotice.txt (dentro do pacote, p/ certificação) e privacy.html
+   (raiz, p/ hospedar e colar a URL no Partner Center).
 
-Assets da Store (StoreAssets/)
-------------------------------
-- StoreLogo.png (50x50) — logo da loja
-- Square150x150Logo.png — tile médio
-- Square44x44Logo.png — tile pequeno / lista
-- SmallLogo.png — tile pequeno / barra de tarefas
-- Wide310x150Logo.png — tile largo
-- SplashScreen.png — tela de splash
+6. GITHUB
+---------
+Repo: https://github.com/wavizo-bot/acompanhamento-consultas.git
+Branches main + master (idênticas, fonte limpa). Conteúdo ~= 35 arquivos fonte
+(PWA + AppxManifest + privacidade + StoreAssets + wwwroot espelho + docs).
+Push com --force foi usado em 2026-10-06 p/ apagar a estrutura antiga (pedido
+do dono). Commits normais daqui em diante.
 
-Versionamento
--------------
-- AppxManifest.xml: Version="1.0.0.0"
-- PWA Cache: `acompanhamento-consultas-v1` (atualizar ao mudar app shell)
-
-Comandos Úteis
---------------
-```bash
-# Testar PWA localmente (precisa HTTPS ou localhost)
-python3 -m http.server 8080
-# ou
-npx serve .
-
-# Gerar MSIX (precisa MakeAppx.exe e certificado)
-"C:\Program Files (x86)\Windows Kits\10\bin\10.0.26100.0\x64\makeappx.exe" pack /d "msix\package" /p "AcompanhamentoConsultas.msix"
-"C:\Program Files (x86)\Windows Kits\10\bin\10.0.26100.0\x64\signtool.exe" sign /fd SHA256 /a /f cert.pfx /p senha "AcompanhamentoConsultas.msix"
-
-# Verificar MSIX
-"C:\Program Files (x86)\Windows Kits\10\bin\10.0.26100.0\x64\makeappx.exe" unpack /p "AcompanhamentoConsultas.msix" /d "msix\verify"
-
-# Instalar localmente (teste)
-Add-AppxPackage -Path "AcompanhamentoConsultas.msix"
-```
-
-MSIX Gerado (2026-10-06)
-------------------------
-- **Arquivo**: `AcompanhamentoConsultas.msix` (~687 KB, raiz do projeto)
-- **Assinatura**: Certificado auto-assinado `CN=57BB464E-553F-45B6-A4ED-B253157408EB` (thumbprint BBFCBD8E0FA9244155D7C451B613A0E8C73EF2ED)
-- **Conteúdo verificado**: 33 arquivos (AppxManifest, .exe/.dll, WebView2 runtimes x64/x86/arm64, wwwroot PWA, StoreAssets, PrivacyStatement.html, PrivacyNotice.txt)
-- **Certificado PFX**: `msix/package/cert.pfx` (senha: 123456) — **apenas para teste local**
-
-Checklist Microsoft Partner Center — O que FALTA para submissão
+7. CHECKLIST PARTNER CENTER (o que ainda falta em 2026-10-06)
 ---------------------------------------------------------------
-| Item | Status | Ação Necessária |
-|------|--------|-----------------|
-| Certificado de assinatura válido (CA confiável) | ❌ | Comprar certificado Code Signing (DigiCert, GlobalSign, Sectigo) com Subject `CN=57BB464E-553F-45B6-A4ED-B253157408EB` |
-| URL da Política de Privacidade online | ❌ | Hospedar `PrivacyStatement.html` (ex: GitHub Pages, site próprio) e informar URL no Partner Center |
-| Screenshots da Store (desktop) | ❌ | Capturar 1-8 screenshots (1366x768 ou 1920x1080) |
-| Descrição completa da Store (PT-BR) | ❌ | Preencher no Partner Center: nome, descrição curta/longa, recursos |
-| Classificação etária (IARC/ESRB) | ❌ | Questionário IARC no Partner Center (provavelmente 3+ ou 12+) |
-| Palavras-chave / Categorias | ❌ | Saúde, Produtividade, Médico |
-| Termos de uso / EULA | ⚠️ Opcional | Criar se desejar |
-| Teste em máquina limpa | ❌ | `Add-AppxPackage`, validar: abre offline, importa dados, filtra, ordena, copia TSV, imprime, PWA instala |
-| Notas de versão (Release Notes) | ❌ | "Versão 1.0.0.0 — Lançamento inicial" |
+FEITO: identidade, manifest, capabilities, assets, privacidade no pacote,
+       .msix x64 buildado+assinado (teste), repo limpo.
+FALTA (lado do dono, no dashboard https://partner.microsoft.com):
+  [ ] Upload do .msix (a Store reassina com cert oficial)
+  [ ] URL da política de privacidade → hospedar privacy.html (ex. GitHub Pages)
+      e colar o link
+  [ ] 1–8 screenshots desktop (1366x768 ou 1920x1080)
+  [ ] Descrição curta/longa PT-BR, categoria (Saúde/Produtividade/Médico),
+      palavras-chave
+  [ ] Questionário de classificação etária IARC (esperado 3+)
+  [ ] Release notes "1.0.0.0 — Lançamento inicial"
+  [ ] Teste em máquina limpa: Add-AppxPackage → abre offline, importa, filtra,
+      ordena, copia, imprime
+  [ ] (Opcional) EULA/termos de uso
 
-Contato / Autor
----------------
-- Desenvolvido por: Maico (Agente Comunitário de Saúde)
-- Telefone: 11 97883-1938
-- Publisher: wavizo (CN=57BB464E-553F-45B6-A4ED-B253157408EB)
+8. COMANDOS
+-----------
+  # PWA local:  python -m http.server 8080  → http://localhost:8080
+  # Build MSIX: build_msix.bat   (ou comandos dentro dele)
+  # Verificar:  makeappx unpack /p AcompanhamentoConsultas.msix /d msix\verify
+  # Assinatura: signtool verify /pa /v AcompanhamentoConsultas.msix
+  # Instalar:   Add-AppxPackage -Path AcompanhamentoConsultas.msix
+  # Git:        git status / git log --oneline -5   (remoto: origin main+master)
+
+9. CONTATOS E DONO
+-------------------
+Dono do app: Maico (ACS), 11 97883-1938. Publisher Store: wavizo.
+Repo GitHub: wavizo-bot/acompanhamento-consultas. Mantenedor deste manual: Muse.
