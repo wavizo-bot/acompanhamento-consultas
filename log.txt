@@ -56,6 +56,19 @@ Data: 2026-10-06
 
 ---
 
+## Sessão 2026-10-06 (descrição curta <200 chars)
+
+### Pedido do dono
+- "Faça uma descrição em menos de 200 caracteres."
+
+### Feito
+1. Nova descrição PT-BR com 152 caracteres (verificado via PowerShell .Length):
+   "App para agentes de saúde acompanharem consultas: importa a agenda, filtra
+   por situação, ordena e imprime. Tudo fica só neste dispositivo, sem internet."
+2. Aplicada em Properties/Description e VisualElements/Description no
+   AppxManifest; rebuild + resign + push (commit 4df0f49, sem force).
+   A mesma frase pode ser colada no campo de descrição curta do Partner Center.
+
 ## Sessão 2026-10-06 (DisplayName rejeitado pelo Partner Center)
 
 ### Pedido do dono
