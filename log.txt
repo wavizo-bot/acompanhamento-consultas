@@ -56,6 +56,52 @@ Data: 2026-10-06
 
 ---
 
+## Sessão 2026-10-07 (tela verde travada no app da Store)
+
+### Pedido do dono
+- App baixado pela Store não passa de uma tela verde (splash #164b47 com o
+  logo, título "SlSS Acompanhamento de consultas"). Print enviado.
+
+### Diagnóstico (por investigação minha)
+1. O splash do sistema com DisplayName + SplashScreen prova que o pacote ATIVA
+   e o exe INICIA — mas o Form1 nunca aparece: o processo morre/trava no
+   arranque do .NET.
+2. Causa raiz: host framework-dependent (dll de 9 KB) exige o runtime .NET 8
+   Desktop instalado; PCs sem ele não abrem o app. Causas secundárias no
+   código antigo: sem userDataFolder explícito (frágil sob identidade de
+   pacote), URI file:// montado na mão, fallback ms-appx-web (só-UWP, inútil
+   no WinForms) e falha silenciosa.
+3. Fonte C# recuperada do histórico do git (commit 0b0803d da branch main
+   antiga); nenhum .cs existia em disco.
+
+### Feito (sucesso)
+1. Fonte restaurada em `src/` (csproj + Program + Form1 + Designer) com:
+   userDataFolder explícito em %LOCALAPPDATA%\wavizo.SlSSAcompanhamentodeconsultas,
+   `new Uri(htmlPath).AbsoluteUri`, título = nome reservado, erro gravado em
+   startup-error.log + MessageBox (sem fallback ms-appx-web).
+2. `dotnet publish -c Release` SELF-CONTAINED win-x64 (SDK 8.0.425 local;
+   WebView2 1.0.2903.40 e runtime packs já estavam no cache NuGet) → 264
+   arquivos copiados p/ msix/package (binários seguem fora do git).
+3. Teste local: exe rodou 20 s vivo, pasta EBWebView criada às 17:37, nenhum
+   startup-error.log → caminho de inicialização provado.
+4. Repack + resign (teste): AcompanhamentoConsultas.msix ~68,5 MB; unpack
+   contém System.Private.CoreLib.dll (self-contained OK), DisplayName reservado
+   e descrição curta OK; assinatura com Subject = Publisher CN (UnknownError
+   no verify = esperado p/ cert auto-assinado sem trust de máquina).
+5. build_msix.bat agora inclui o passo `dotnet publish`; .gitignore ignora
+   src/bin e src/obj; EntryPoint mantido (ativação funciona, não mexer).
+
+### Por presunção minha
+1. Self-contained (~68 MB) em vez de exigir .NET 8 nas máquinas (mais robusto
+   p/ PCs de ACS; estourou o tamanho mas Store aceita).
+2. Mantidos os loaders x86/arm64 em runtimes/ (inúteis p/ pacote x64, inofensivos).
+3. Estrutura/textos desta sessão no manual e log.
+
+### Pendente (lado do dono)
+1. Subir o NOVO .msix no Partner Center (nova versão) e testar download —
+   a tela verde deve sumir; se falhar, pedir o arquivo startup-error.log de
+   %LOCALAPPDATA%\wavizo.SlSSAcompanhamentodeconsultas\WebView2\.
+
 ## Sessão 2026-10-06 (descrição curta <200 chars)
 
 ### Pedido do dono

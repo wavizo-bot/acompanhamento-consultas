@@ -10,6 +10,9 @@ msix/package/Microsoft.Web.WebView2.*
 # Build MSIX (artefato gerado localmente, nao versionar)
 *.msix
 msix/unpacked/
+# Pastas de idioma do publish self-contained (regeneradas no build)
+msix/package/??/
+msix/package/pt-BR/
 
 # Certificados (chave privada de teste local, nao versionar)
 *.pfx
@@ -23,6 +26,10 @@ example/
 .vscode/
 .DS_Store
 Thumbs.db
+
+# Build .NET
+src/bin/
+src/obj/
 
 # Logs
 *.log

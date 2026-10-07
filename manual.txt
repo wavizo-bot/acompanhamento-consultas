@@ -50,6 +50,9 @@ RAIZ = fonte da verdade do PWA:
                           runtimes/WebView2). log.txt é exceção explícita (!log.txt).
 
 MSIX:
+  src/ ..................... FONTE C# do host WebView2 (WinForms .NET 8):
+                             AcompanhamentoConsultas.csproj (self-contained win-x64,
+                             WebView2 1.0.2903.40), Program.cs, Form1.cs, Form1.Designer.cs
   msix/package/AppxManifest.xml ... manifesto CANÔNICO (usar este; não o de unpacked)
   msix/package/PrivacyStatement.html + PrivacyNotice.txt ... PRIVACIDADE (obrig.
       p/ certificação Store). Também espelhado em privacy.html na raiz.
@@ -57,8 +60,9 @@ MSIX:
       SmallLogo, Wide310x150, SplashScreen)
   msix/package/wwwroot/ ... ESPELHO do PWA (index.html, manifest.json, sw.js,
       icons/). build_msix.bat sincroniza via xcopy. Verificado idêntico (fc).
-  msix/package/*.exe,*.dll,runtimes/ ... host .NET WebView2 compilado (x64) +
-      WebView2Loader (x64/x86/arm64). NÃO versionados (binário local).
+  msix/package/*.exe,*.dll,runtimes/ ... host .NET WebView2 SELF-CONTAINED x64
+      (~250 arquivos, ~68 MB o .msix) + WebView2Loader (x64/x86/arm64).
+      NÃO versionados (binário local; build_msix.bat regenera via dotnet publish).
   msix/wavizo-test.pfx/.cer ... cert AUTO-ASSINADO de TESTE, Subject EXATO
       CN=57BB464E-553F-45B6-A4ED-B253157408EB, senha "wavizo-test-2026",
       validade 2026-10-06→2027-10-06. NÃO versionado. Serve p/ teste local
@@ -108,6 +112,17 @@ e) Binários (.msix, .exe, .dll, .pfx) NÃO vão p/ o git — repo = só fontes.
 f) Política de privacidade existe em 3 lugares intencionais: PrivacyStatement.
    html + PrivacyNotice.txt (dentro do pacote, p/ certificação) e privacy.html
    (raiz, p/ hospedar e colar a URL no Partner Center).
+g) TELA VERDE TRAVADA (splash nunca sai, 2026-10-07): o host era
+   framework-dependent (AcompanhamentoConsultas.dll de 9 KB) e PCs sem o
+   runtime .NET 8 não conseguiam iniciar o app. Correção: publish
+   SELF-CONTAINED win-x64 (dotnet publish, ~250 arquivos no pacote) + fonte
+   restaurada em src/ com userDataFolder explícito em
+   %LOCALAPPDATA%\wavizo.SlSSAcompanhamentodeconsultas\WebView2 (o padrão falha
+   sob identidade de pacote), navegação via Uri absoluto, título = nome
+   reservado, e erro de inicialização gravado em startup-error.log + MessageBox.
+   Teste local: exe roda 20 s, pasta EBWebView criada, sem error log.
+   EntryPoint ficou "AcompanhamentoConsultas.Program" (ativação funciona —
+   o splash prova; não mexer).
 
 6. GITHUB
 ---------
