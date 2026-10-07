@@ -56,6 +56,21 @@ Data: 2026-10-06
 
 ---
 
+## Sessão 2026-10-07 (versão 1.0.1.0 p/ novo upload)
+
+### Pedido do dono
+- Confirmar se msix/AcompanhamentoConsultas.msix é o arquivo da versão
+  corrigida (tela verde) e, em caso afirmativo, alterar o número de versão,
+  pois o Partner Center rejeita reupload do mesmo número.
+
+### Feito
+1. Confirmado: msix/AcompanhamentoConsultas.msix É a versão corrigida
+   (self-contained, fix tela verde) — cópia idêntica e sincronizada do build
+   fresco da raiz (build_msix.bat gera na raiz e copia p/ msix/).
+2. Identity Version 1.0.0.0 → 1.0.1.0 no AppxManifest (+ PrivacyNotice.txt);
+   repack + resign (teste) das DUAS cópias; unpack confirmou 1.0.1.0 no pacote;
+   assinatura Subject = Publisher CN. Manual atualizado; push normal.
+
 ## Sessão 2026-10-07 (tela verde travada no app da Store)
 
 ### Pedido do dono
