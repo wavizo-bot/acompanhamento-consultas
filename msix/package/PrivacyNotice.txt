@@ -16,5 +16,5 @@ dispositivo ou navegador possui seu próprio armazenamento independente,
 mesmo acessando o mesmo link. Para apagar os dados, use o botão
 "Limpar todos os dados" na barra lateral.
 
-Versão do app: 1.0.1.0
+Versão do app: 1.0.2.0
 Distribuidor: wavizo

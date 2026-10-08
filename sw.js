@@ -1,7 +1,7 @@
 // Service worker do "Acompanhamento de Consultas".
 // O app é local-first (dados ficam em localStorage), então aqui só cuidamos
 // de deixar o "casco" do app (HTML/CSS/JS/ícones) disponível offline.
-const CACHE_NAME = 'acompanhamento-consultas-v1';
+const CACHE_NAME = 'acompanhamento-consultas-v2';
 const APP_SHELL = [
   './',
   './index.html',

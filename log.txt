@@ -56,6 +56,46 @@ Data: 2026-10-06
 
 ---
 
+## Sessão 2026-10-08 (multi-profissional + relatórios, v1.0.2.0)
+
+### Pedido do dono
+1. Suportar mais de um profissional (antes só um por vez).
+2. Produzir relatórios sobre o conteúdo.
+3. Três arquivos de exemplo, um profissional diferente cada (example/).
+
+### Investigação minha (formato real dos arquivos)
+- Cabeçalho traz `Especialidade:`/`Profissionais:` (valor na linha seguinte) e,
+  no corpo, `Profissional: NOME` + `ESPECIALIDADE:` inline (um profissional
+  por arquivo: LUANA PRISCILA KARCK/PSICÓLOGO, ANDRESSA BELLOCCHIO BERBER/
+  ODONTOLOGIA, EVELY SARTORTI DA SILVA/ODONTOLOGIA).
+- Corpo no mesmo formato de blocos de data já parseado; status com prefixo
+  CANCELADO... já normalizavam p/ CANCELADO; datas "DD-MM-AAAA HH:MM - Dia"
+  já aceitas pelo regex.
+- Rodapé `TOTAL DE CONSULTA POR ESTABELECIMENTO, PROFISSIONAL E ESPECIALIDADE: N`
+  usado p/ validação (ex.: 285 informados, 181 com usuário identificado).
+
+### Feito (sucesso, tudo testado)
+1. Parser extrai profissional/especialidade/total esperado do cabeçalho
+   (inline ou linha seguinte); override manual via 2 inputs na lateral.
+2. Storage v2 (`acompanhamento-consultas-v2`): professionals[] > reports[];
+   meses substituídos POR profissional; migração automática do v1 (vira
+   "(Não identificado)"); toast avisa divergência informado × identificado.
+3. UI: painel Profissionais (chips + excluir), filtro Profissional, coluna
+   Profissional na lista/TSV, painel Relatórios (matrizes profissional×situação
+   e mês×situação, no recorte de profissional+meses) + Copiar relatório;
+   impressão inclui relatórios.
+4. Validação com Node + DOM falso sobre os 3 arquivos reais: 3 profissionais,
+   154/203/181 agendamentos, reimport substitui sem duplicar, filtro isola,
+   totais conferem, copiar/excluir OK, migração v1 OK (ALL TESTS + MIGRATION PASSED).
+5. sw.js cache v1→v2 (senão PWA instalado serviria o HTML velho); wwwroot
+   espelhado (fc sem diferenças); versão 1.0.1.0→1.0.2.0 (+PrivacyNotice);
+   repack+resign (~63 MB, 2 cópias); smoke test exe 20 s OK; push normal.
+
+### Por presunção minha
+1. Mesma pessoa em 2 profissionais = 2 linhas (chave inclui profissional).
+2. Relatórios respeitam profissional+meses, ignoram filtros de situação.
+3. Cache SW e versão bumpados juntos (evitam reupload rejeitado / PWA velho).
+
 ## Sessão 2026-10-07 (versão 1.0.1.0 p/ novo upload)
 
 ### Pedido do dono

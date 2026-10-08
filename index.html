@@ -77,7 +77,7 @@
     .month-chip::before { content:"ARQ"; color:#66867e; font-size:9px; letter-spacing:.08em; }
     .month-chip .chip-count { min-width:18px; padding:1px 5px; border-radius:999px; color:#fff; background:var(--teal); font-size:11px; text-align:center; }
     .empty-months { display:flex; align-items:center; min-height:37px; color:var(--muted); font-size:13px; font-style:italic; }
-    .filters { position:relative; display:grid; grid-template-columns:minmax(175px,.8fr) minmax(175px,.8fr) minmax(300px,1.3fr) auto; gap:14px; align-items:end; margin-bottom:17px; padding:42px 20px 19px; border:1px solid var(--line); border-radius:var(--radius); background:#eef2ed; }
+    .filters { position:relative; display:grid; grid-template-columns:minmax(160px,.7fr) minmax(150px,.7fr) minmax(150px,.7fr) minmax(260px,1.2fr) auto; gap:14px; align-items:end; margin-bottom:17px; padding:42px 20px 19px; border:1px solid var(--line); border-radius:var(--radius); background:#eef2ed; }
     .filters::before { content:"SELEÇÃO DE ARQUIVO · DEFINA O RECORTE DO HISTÓRICO"; position:absolute; top:0; right:0; left:0; padding:9px 20px; color:#557069; border-bottom:1px solid #d8dfd8; font-size:10px; font-weight:800; letter-spacing:.1em; }
     .filter-field label { display:block; margin:0 0 6px; color:#334b49; font-size:12px; font-weight:700; letter-spacing:.03em; }
     .filter-field select { width:100%; min-height:39px; padding:8px 10px; color:var(--ink); border:1px solid #bcc8c1; border-radius:9px; background:#fffdf8; }
@@ -134,10 +134,26 @@
     .toast.error { background:#913b35; }
     .help-card { margin-top:18px; padding:13px; border-left:3px solid #ddbd79; color:rgba(255,255,255,.86); background:rgba(8,49,45,.24); font-size:12px; }
     .help-card strong { color:#fff; }
+    .field-label { display:block; margin:12px 0 6px; color:#c6e0d8; font-size:11px; letter-spacing:.12em; text-transform:uppercase; font-weight:700; }
+    .field-input { display:block; width:100%; min-height:39px; padding:8px 10px; color:#183531; border:1px solid rgba(255,255,255,.4); border-radius:11px; background:#fbf9f2; }
+    .filter-field select { width:100%; min-height:39px; padding:8px 10px; color:var(--ink); border:1px solid #bcc8c1; border-radius:9px; background:#fffdf8; }
+    .prof-chip { display:inline-flex; align-items:center; gap:8px; padding:8px 6px 8px 10px; border:1px solid #a9c9bf; border-radius:3px 9px 9px 3px; color:#114f48; background:#f0f7f3; font-size:13px; font-weight:700; box-shadow:inset 3px 0 0 #16635b; }
+    .prof-chip small { color:#66867e; font-weight:400; }
+    .prof-chip .chip-count { min-width:18px; padding:1px 5px; border-radius:999px; color:#fff; background:var(--teal); font-size:11px; text-align:center; }
+    .chip-remove { min-height:0; padding:3px 8px; border-radius:7px; color:#98413a; background:#f8e4e0; border:1px solid #e3b8b2; font-size:11px; font-weight:700; }
+    .chip-remove:hover { background:#f2d2cd; }
+    .report-panel { position:relative; margin-top:25px; padding:43px 21px 18px; border:1px solid var(--line); border-radius:var(--radius); background:var(--card); box-shadow:var(--shadow); }
+    .report-panel::before { content:"RELATÓRIOS · TOTAIS POR PROFISSIONAL E POR MÊS"; position:absolute; top:0; right:0; left:0; padding:9px 21px; color:#54706a; border-bottom:1px solid #e5e4dc; border-radius:var(--radius) var(--radius) 0 0; background:#f1f2ea; font-size:10px; font-weight:800; letter-spacing:.11em; }
+    .report-scope { margin:0 0 14px; color:var(--muted); font-size:13px; }
+    .report-table-wrap { overflow:auto; margin-bottom:18px; border:1px solid #e3e5df; border-radius:10px; }
+    .report-table-wrap h4 { margin:0; padding:10px 14px; background:#f5f5ef; font-size:12px; letter-spacing:.06em; text-transform:uppercase; color:#56706c; }
+    .report-table-wrap table { min-width:640px; }
+    .report-table-wrap td:first-child, .report-table-wrap th:first-child { position:sticky; left:0; background:#fffdf8; }
+    .report-total td { font-weight:700; background:#f0f7f3; }
     @media (max-width:960px) { .app-shell { grid-template-columns:1fr; } .sidebar { position:relative; height:auto; min-height:0; padding:23px 20px; } .main { padding:28px 20px 40px; } .filters { grid-template-columns:1fr; } .filter-actions { justify-content:flex-end; } }
     @media (max-width:620px) { .main-header, .list-toolbar, .section-heading { align-items:flex-start; flex-direction:column; } .storage-card { width:100%; } .toolbar-actions { width:100%; } .toolbar-actions .button { flex:1; } .main-title h2 { font-size:32px; } .filters { padding:16px; } }
     @media (prefers-reduced-motion:no-preference) { .month-chip { animation:chip-enter 180ms cubic-bezier(.23,1,.32,1) both; } @keyframes chip-enter { from { opacity:0; transform:translateY(5px); } to { opacity:1; transform:translateY(0); } } }
-    @media print { @page { margin:12mm; } body { background:#fff; font-size:10pt; } .sidebar, .month-panel, .filters, .storage-card, .toolbar-actions, .order-bar, .toast { display:none !important; } .app-shell { display:block; } .main { padding:0; } .main-header { margin:0 0 14px; } .main-title .eyebrow { margin-bottom:3px; } .main-title h2 { font-size:25pt; } .main-title p { font-size:10pt; } .list-panel { border:0; border-radius:0; box-shadow:none; } .list-toolbar { padding:0 0 10px; border-bottom:1px solid #777; } .list-summary { padding:8px 0; background:#fff; } .table-wrap { overflow:visible; } table { min-width:0; table-layout:fixed; } th { padding:7px 5px; background:#f3f3f3; font-size:8pt; } td { padding:8px 5px; } th:nth-child(1), td:nth-child(1) { width:25%; } th:nth-child(2), td:nth-child(2) { width:12.5%; } th:nth-child(3), td:nth-child(3) { width:12.5%; } th:nth-child(4), td:nth-child(4) { width:50%; } .phone-line { color:inherit; } .events { min-width:0; } .event { padding:2px 3px; border:0; font-size:8pt; } .badge { font-size:7pt; } }
+    @media print { @page { margin:12mm; } body { background:#fff; font-size:10pt; } .sidebar, .month-panel, .filters, .storage-card, .toolbar-actions, .order-bar, .toast { display:none !important; } .app-shell { display:block; } .main { padding:0; } .main-header { margin:0 0 14px; } .main-title .eyebrow { margin-bottom:3px; } .main-title h2 { font-size:25pt; } .main-title p { font-size:10pt; } .list-panel { border:0; border-radius:0; box-shadow:none; } .list-toolbar { padding:0 0 10px; border-bottom:1px solid #777; } .list-summary { padding:8px 0; background:#fff; } .table-wrap { overflow:visible; } table { min-width:0; table-layout:fixed; } th { padding:7px 5px; background:#f3f3f3; font-size:8pt; } td { padding:8px 5px; } th:nth-child(1), td:nth-child(1) { width:22%; } th:nth-child(2), td:nth-child(2) { width:11%; } th:nth-child(3), td:nth-child(3) { width:12%; } th:nth-child(4), td:nth-child(4) { width:15%; } th:nth-child(5), td:nth-child(5) { width:40%; } .phone-line { color:inherit; } .events { min-width:0; } .event { padding:2px 3px; border:0; font-size:8pt; } .badge { font-size:7pt; } }
   </style>
 </head>
 <body>
@@ -155,7 +171,11 @@
       <section class="sidebar-section">
         <p class="eyebrow">1. Importar um mês</p>
         <h2>Cole a agenda copiada</h2>
-        <p class="sidebar-copy">Copie a tela do relatório da prefeitura — de um mês só ou de um período maior, como o ano inteiro — cole aqui e incorpore os agendamentos ao histórico.</p>
+        <p class="sidebar-copy">Copie a tela do relatório da prefeitura — de um mês só ou de um período maior, como o ano inteiro — cole aqui e incorpore os agendamentos ao histórico. O profissional é detectado do cabeçalho; preencha abaixo só se quiser corrigir.</p>
+        <label class="field-label" for="profNameInput">Profissional (vazio = detectar)</label>
+        <input class="field-input" id="profNameInput" type="text" autocomplete="off" placeholder="Ex.: LUANA PRISCILA KARCK" />
+        <label class="field-label" for="profSpecInput">Especialidade (vazio = detectar)</label>
+        <input class="field-input" id="profSpecInput" type="text" autocomplete="off" placeholder="Ex.: PSICÓLOGO" />
         <textarea id="importText" spellcheck="false" aria-label="Cole aqui a cópia da tela de agendamento" placeholder="Cole aqui o conteúdo completo copiado da agenda..."></textarea>
         <button class="button button-primary" id="importButton" type="button">Incorporar agenda</button>
         <div class="help-card"><strong>Como funciona.</strong> Cada mês é identificado pela data de cada agendamento, então um único texto colado pode conter vários meses de uma vez. Se algum desses meses já existir, a versão armazenada será substituída para evitar duplicidades.</div>
@@ -190,7 +210,18 @@
         <div class="month-chips" id="monthChips"><span class="empty-months">Nenhum período carregado.</span></div>
       </section>
 
+      <section class="month-panel" aria-labelledby="profsHeading">
+        <div class="section-heading"><div><h3 id="profsHeading">Profissionais cadastrados</h3><p>Cada agenda importada fica vinculada ao seu profissional.</p></div></div>
+        <div class="month-chips" id="profChips"><span class="empty-months">Nenhum profissional cadastrado.</span></div>
+      </section>
+
       <section class="filters" aria-label="Filtros da lista de acompanhamento">
+        <div class="filter-field">
+          <label for="profFilter">Profissional</label>
+          <select id="profFilter">
+            <option value="TODOS">Todos os profissionais</option>
+          </select>
+        </div>
         <div class="filter-field">
           <label for="statusFilter">Contém situação</label>
           <select id="statusFilter">
@@ -245,8 +276,18 @@
         </div>
         <div class="list-summary" id="listSummary">Importe uma agenda e clique em “Gerar lista”.</div>
         <div class="table-wrap" id="listContainer">
-          <div class="empty-list"><div class="empty-ficha"><strong>Ainda não há histórico para exibir.</strong>Cole a cópia de uma agenda mensal no campo à esquerda e incorpore os dados para abrir a primeira ficha.</div></div>
+          <div class="empty-list"><div class="empty-ficha"><strong>Ainda não há histórico para exibir.</strong>Cole a cópia de uma agenda mensal no campo à esquerda e incorpore os dados para abrir a primeira ficha.</div>          </div>
         </div>
+      </section>
+
+      <section class="report-panel" aria-labelledby="reportHeading">
+        <div class="section-heading">
+          <div><h3 id="reportHeading">Relatórios</h3><p>Totais no mesmo recorte de profissional e meses da lista (ignora os filtros de situação).</p></div>
+          <div class="toolbar-actions"><button class="button button-outline" id="copyReportButton" type="button">Copiar relatório</button></div>
+        </div>
+        <p class="report-scope" id="reportScope">Importe uma agenda para gerar os relatórios.</p>
+        <div class="report-table-wrap"><h4>Por profissional × situação</h4><div id="reportByProf"></div></div>
+        <div class="report-table-wrap"><h4>Por mês × situação</h4><div id="reportByMonth"></div></div>
       </section>
     </main>
   </div>
@@ -254,7 +295,9 @@
   <script>
     /* Prontuário de Mesa: processamento local, sem rede, com rastreabilidade por mês. */
     (() => {
-      const STORAGE_KEY = 'acompanhamento-consultas-v1';
+      const STORAGE_KEY = 'acompanhamento-consultas-v2';
+      const LEGACY_KEY = 'acompanhamento-consultas-v1';
+      const UNIDENTIFIED = '(Não identificado)';
       const STATUS = ['AGENDADO','ADMITIDO','CANCELADO','TRANSFERIDO','FALTOU','AGENDA RESERVA','RESERVA CANCELADA','RESERVADO','NÃO REALIZADO'];
       let appState = loadState();
       let generatedRows = [];
@@ -266,10 +309,20 @@
 
       function loadState() {
         try {
-          const parsed = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{"reports":[]}');
-          return { reports: Array.isArray(parsed.reports) ? parsed.reports : [] };
+          const raw = localStorage.getItem(STORAGE_KEY);
+          if (raw) {
+            const parsed = JSON.parse(raw);
+            const professionals = Array.isArray(parsed.professionals) ? parsed.professionals : [];
+            return { professionals: professionals.filter((p) => p && typeof p.name === 'string' && Array.isArray(p.reports)) };
+          }
+          // Migração do formato antigo (v1: meses sem profissional).
+          const legacy = JSON.parse(localStorage.getItem(LEGACY_KEY) || 'null');
+          if (legacy && Array.isArray(legacy.reports) && legacy.reports.length) {
+            return { professionals: [{ name: '', specialty: '', reports: legacy.reports }] };
+          }
+          return { professionals: [] };
         } catch (error) {
-          return { reports: [] };
+          return { professionals: [] };
         }
       }
 
@@ -309,8 +362,30 @@
         return lines.slice(from).find((line) => line && !/^\[?(CEL|RES|COM|TEL)/i.test(line)) || '';
       }
 
+      function detectHeaderField(lines, label) {
+        const inline = lines.find((line) => new RegExp('^' + label + 's?\\s*:\\s*\\S', 'i').test(line));
+        if (inline) return inline.replace(new RegExp('^' + label + 's?\\s*:\\s*', 'i'), '').replace(/\s+/g, ' ').trim();
+        const idx = lines.findIndex((line) => new RegExp('^' + label + 's?\\s*:?\\s*$', 'i').test(line));
+        if (idx >= 0) {
+          const next = lines.slice(idx + 1).find((l) => l
+            && !/^(show|hide|first|previous|next|last|go back|find|refresh|grade)/i.test(l)
+            && !/:$/.test(l));
+          if (next) return next.replace(/\s+/g, ' ').trim();
+        }
+        return '';
+      }
+
+      function detectExpectedTotal(lines) {
+        const footer = lines.find((line) => /TOTAL DE CONSULTA/i.test(line));
+        const match = footer ? footer.match(/(\d+)\s*$/) : null;
+        return match ? Number(match[1]) : 0;
+      }
+
       function parseReport(text) {
         const lines = cleanLines(text);
+        const professional = detectHeaderField(lines, 'profissional');
+        const specialty = detectHeaderField(lines, 'especialidade');
+        const expectedTotal = detectExpectedTotal(lines);
         const rowIndexes = [];
         lines.forEach((line, index) => { if (parseDateTime(line)) rowIndexes.push(index); });
         const entries = [];
@@ -353,23 +428,70 @@
         }
         const monthKeys = [...new Set(entries.map((entry) => entry.monthKey))].sort();
         if (!entries.length) throw new Error('Não foram encontrados agendamentos com usuário identificado. Confira se foi colado o relatório completo.');
+        entries.forEach((entry) => { entry.professional = professional; entry.specialty = specialty; });
         const months = monthKeys.map((monthKey) => ({
           monthKey,
           entries: entries.filter((entry) => entry.monthKey === monthKey)
         }));
-        return { months };
+        return { months, professional, specialty, expectedTotal };
       }
 
-      function getReports() { return [...appState.reports].sort((a, b) => a.monthKey.localeCompare(b.monthKey)); }
-      function getEntries() { return getReports().flatMap((report) => report.entries || []); }
+      function profDisplay(prof) { return (prof && prof.name ? prof.name : UNIDENTIFIED); }
+
+      function getProfessionals() {
+        return [...appState.professionals].sort((a, b) => {
+          const an = (a.name || '~~~').toLowerCase();
+          const bn = (b.name || '~~~').toLowerCase();
+          return an.localeCompare(bn, 'pt-BR');
+        });
+      }
+
+      function getScopedProfessionals() {
+        const wanted = $('profFilter') ? $('profFilter').value : 'TODOS';
+        const all = getProfessionals();
+        if (!wanted || wanted === 'TODOS') return all;
+        return all.filter((p) => profDisplay(p) === wanted);
+      }
+
+      function getScopedReports() {
+        return getScopedProfessionals()
+          .flatMap((prof) => (prof.reports || []).map((report) => ({ prof, ...report })))
+          .sort((a, b) => a.monthKey.localeCompare(b.monthKey));
+      }
+
+      function getScopedEntries() { return getScopedReports().flatMap((report) => report.entries || []); }
 
       function updateMonthViews() {
-        const reports = getReports();
-        const total = reports.reduce((sum, report) => sum + report.entries.length, 0);
-        $('storageCount').textContent = reports.length ? `${reports.length} ${reports.length === 1 ? 'mês armazenado' : 'meses armazenados'}` : 'Nenhum mês';
-        $('storageDetail').textContent = reports.length ? `${total} agendamentos identificados` : 'aguardando importação';
-        $('monthChips').innerHTML = reports.length ? reports.map((report) => `<span class="month-chip">${esc(labelMonth(report.monthKey))}<span class="chip-count">${report.entries.length}</span></span>`).join('') : '<span class="empty-months">Nenhum período carregado.</span>';
-        $('monthSelector').innerHTML = reports.length ? reports.map((report) => `<label class="month-option"><input type="checkbox" class="month-check" value="${esc(report.monthKey)}" checked> ${esc(labelMonth(report.monthKey))}</label>`).join('') : '<span class="empty-months">Importe ao menos uma agenda para habilitar este filtro.</span>';
+        const professionals = getProfessionals();
+        const scopedReports = getScopedReports();
+        const totalEntries = professionals.reduce((sum, prof) => sum + (prof.reports || []).reduce((s, r) => s + (r.entries || []).length, 0), 0);
+        const totalMonths = professionals.reduce((sum, prof) => sum + (prof.reports || []).length, 0);
+        $('storageCount').textContent = professionals.length
+          ? `${professionals.length} ${professionals.length === 1 ? 'profissional' : 'profissionais'} · ${totalMonths} ${totalMonths === 1 ? 'mês' : 'meses'}`
+          : 'Nenhum dado';
+        $('storageDetail').textContent = professionals.length ? `${totalEntries} agendamentos identificados` : 'aguardando importação';
+
+        $('profChips').innerHTML = professionals.length ? professionals.map((prof) => {
+          const count = (prof.reports || []).reduce((s, r) => s + (r.entries || []).length, 0);
+          const spec = prof.specialty ? ` <small>${esc(prof.specialty)}</small>` : '';
+          return `<span class="prof-chip">${esc(profDisplay(prof))}${spec}<span class="chip-count">${count}</span><button class="chip-remove" data-remove-prof="${esc(profDisplay(prof))}" type="button" title="Excluir este profissional e seus dados">excluir</button></span>`;
+        }).join('') : '<span class="empty-months">Nenhum profissional cadastrado.</span>';
+
+        const filter = $('profFilter');
+        const previousProf = filter.value || 'TODOS';
+        filter.innerHTML = '<option value="TODOS">Todos os profissionais</option>' + professionals.map((prof) => `<option value="${esc(profDisplay(prof))}">${esc(profDisplay(prof))}</option>`).join('');
+        filter.value = professionals.some((p) => profDisplay(p) === previousProf) ? previousProf : 'TODOS';
+
+        const monthTotals = new Map();
+        scopedReports.forEach((r) => monthTotals.set(r.monthKey, (monthTotals.get(r.monthKey) || 0) + ((r.entries || []).length)));
+        const months = [...monthTotals.keys()].sort();
+        const previousMonths = new Set([...document.querySelectorAll('.month-check')].filter((i) => i.checked).map((i) => i.value));
+        const firstRender = !document.querySelectorAll('.month-check').length;
+        $('monthChips').innerHTML = months.length ? months.map((monthKey) => `<span class="month-chip">${esc(labelMonth(monthKey))}<span class="chip-count">${monthTotals.get(monthKey)}</span></span>`).join('') : '<span class="empty-months">Nenhum período carregado.</span>';
+        $('monthSelector').innerHTML = months.length ? months.map((monthKey) => {
+          const checked = firstRender || previousMonths.size === 0 || previousMonths.has(monthKey) ? ' checked' : '';
+          return `<label class="month-option"><input type="checkbox" class="month-check" value="${esc(monthKey)}"${checked}> ${esc(labelMonth(monthKey))}</label>`;
+        }).join('') : '<span class="empty-months">Importe ao menos uma agenda para habilitar este filtro.</span>';
       }
 
       function identityFor(entry) { return entry.citizenNumber ? `n:${entry.citizenNumber}` : entry.cpf ? `c:${entry.cpf}` : entry.cns ? `s:${entry.cns}` : `u:${entry.patient.toUpperCase()}`; }
@@ -382,11 +504,11 @@
         const selectedMonths = getSelectedMonths();
         const statusFilter = $('statusFilter').value;
         const lastStatusFilter = $('lastStatusFilter').value;
-        const displayed = getEntries().filter((entry) => selectedMonths.includes(entry.monthKey));
+        const displayed = getScopedEntries().filter((entry) => selectedMonths.includes(entry.monthKey));
         const groups = new Map();
         displayed.forEach((entry) => {
-          const key = identityFor(entry);
-          if (!groups.has(key)) groups.set(key, { patient:entry.patient, citizenNumber:entry.citizenNumber, cpf:entry.cpf, cns:entry.cns, phones:entry.phones, events:[] });
+          const key = `${entry.professional || ''}|${identityFor(entry)}`;
+          if (!groups.has(key)) groups.set(key, { patient:entry.patient, citizenNumber:entry.citizenNumber, cpf:entry.cpf, cns:entry.cns, phones:entry.phones, professional:entry.professional || '', specialty:entry.specialty || '', events:[] });
           const person = groups.get(key);
           person.events.push(entry);
           if (!person.citizenNumber && entry.citizenNumber) person.citizenNumber = entry.citizenNumber;
@@ -439,7 +561,9 @@
         if (lastStatusFilter !== 'TODAS') filterParts.push(`última situação ${lastStatusFilter}`);
         const filterText = filterParts.length ? `, ${filterParts.join(' e ')}` : ', considerando todas as situações';
         const orderText = `, em ${ORDER_LABELS[currentOrder] || ORDER_LABELS.alpha}`;
-        $('listSummary').textContent = `${generatedRows.length} ${generatedRows.length === 1 ? 'pessoa encontrada' : 'pessoas encontradas'} em ${selectedMonths.length || 0} ${selectedMonths.length === 1 ? 'mês selecionado' : 'meses selecionados'}${filterText}${orderText}.`;
+        const profScope = $('profFilter').value;
+        const profText = (!profScope || profScope === 'TODOS') ? 'todos os profissionais' : `profissional ${profScope}`;
+        $('listSummary').textContent = `${generatedRows.length} ${generatedRows.length === 1 ? 'pessoa encontrada' : 'pessoas encontradas'} em ${selectedMonths.length || 0} ${selectedMonths.length === 1 ? 'mês selecionado' : 'meses selecionados'} (${profText})${filterText}${orderText}.`;
         if (!generatedRows.length) {
           list.innerHTML = '<div class="empty-list"><div class="empty-ficha"><strong>Nenhuma pessoa encontrada com estes filtros.</strong>Selecione outros meses ou escolha uma situação diferente para abrir os registros correspondentes.</div></div>';
           return;
@@ -449,18 +573,99 @@
           const id = person.citizenNumber || 'Não informado';
           const phones = phoneNumbers(person.phones);
           const phoneCell = phones.length ? phones.map((phone) => `<a class="phone-line" href="https://wa.me/55${esc(phone)}" target="_blank" rel="noopener noreferrer">${esc(phone)}</a>`).join('') : '<span class="person-detail">Não identificado</span>';
-          return `<tr><td><span class="person-name">${esc(person.patient)}</span><span class="person-detail">CPF: ${esc(person.cpf || 'não identificado')}</span></td><td class="cell-id">${esc(id)}</td><td class="phone-cell">${phoneCell}</td><td><div class="events">${events}</div></td></tr>`;
+          const profCell = person.professional
+            ? `<span class="person-name">${esc(person.professional)}</span>${person.specialty ? `<span class="person-detail">${esc(person.specialty)}</span>` : ''}`
+            : '<span class="person-detail">Não identificado</span>';
+          return `<tr><td><span class="person-name">${esc(person.patient)}</span><span class="person-detail">CPF: ${esc(person.cpf || 'não identificado')}</span></td><td class="cell-id">${esc(id)}</td><td class="phone-cell">${phoneCell}</td><td>${profCell}</td><td><div class="events">${events}</div></td></tr>`;
         }).join('');
-        list.innerHTML = `<table><thead><tr><th>Usuário da Saúde</th><th>Cadastro</th><th>Telefone</th><th>Data e situação</th></tr></thead><tbody>${body}</tbody></table>`;
+        list.innerHTML = `<table><thead><tr><th>Usuário da Saúde</th><th>Cadastro</th><th>Telefone</th><th>Profissional</th><th>Data e situação</th></tr></thead><tbody>${body}</tbody></table>`;
+      }
+
+      let generatedReportText = '';
+
+      function countByStatus(entries) {
+        const counts = {};
+        STATUS.forEach((s) => { counts[s] = 0; });
+        entries.forEach((entry) => { counts[entry.status] = (counts[entry.status] || 0) + 1; });
+        return counts;
+      }
+
+      function reportTableHTML(rowLabel, rows) {
+        const head = `<tr><th>${esc(rowLabel)}</th>${STATUS.map((s) => `<th>${esc(s)}</th>`).join('')}<th>Total</th></tr>`;
+        const totals = countByStatus(rows.flatMap((r) => r.entries));
+        const body = rows.map((row) => {
+          const counts = countByStatus(row.entries);
+          const total = row.entries.length;
+          return `<tr><td><span class="person-name">${esc(row.label)}</span>${row.sub ? `<span class="person-detail">${esc(row.sub)}</span>` : ''}</td>${STATUS.map((s) => `<td class="cell-id">${counts[s] || ''}</td>`).join('')}<td class="cell-id"><strong>${total}</strong></td></tr>`;
+        }).join('');
+        const grand = rows.reduce((s, r) => s + r.entries.length, 0);
+        const totalRow = `<tr class="report-total"><td>Total</td>${STATUS.map((s) => `<td class="cell-id">${totals[s] || ''}</td>`).join('')}<td class="cell-id">${grand}</td></tr>`;
+        return `<table><thead>${head}</thead><tbody>${body}${totalRow}</tbody></table>`;
+      }
+
+      function reportTableTSV(title, rowLabel, rows) {
+        const lines = [[title], [rowLabel, ...STATUS, 'Total']];
+        rows.forEach((row) => {
+          const counts = countByStatus(row.entries);
+          lines.push([row.sub ? `${row.label} (${row.sub})` : row.label, ...STATUS.map((s) => counts[s] || 0), row.entries.length]);
+        });
+        const totals = countByStatus(rows.flatMap((r) => r.entries));
+        lines.push(['Total', ...STATUS.map((s) => totals[s] || 0), rows.reduce((s, r) => s + r.entries.length, 0)]);
+        return lines.map((row) => row.map((value) => String(value).replace(/[\t\n]/g, ' ')).join('\t')).join('\n');
+      }
+
+      function renderReports() {
+        const selectedMonths = getSelectedMonths();
+        const entries = getScopedEntries().filter((entry) => selectedMonths.includes(entry.monthKey));
+        const profScope = $('profFilter').value;
+        const profText = (!profScope || profScope === 'TODOS') ? 'todos os profissionais' : `profissional ${profScope}`;
+        $('reportScope').textContent = entries.length
+          ? `${entries.length} ${entries.length === 1 ? 'agendamento contado' : 'agendamentos contados'} (${profText}, ${selectedMonths.length || 0} ${selectedMonths.length === 1 ? 'mês' : 'meses'}).`
+          : 'Sem agendamentos no recorte atual.';
+
+        const byProfMap = new Map();
+        entries.forEach((entry) => {
+          const key = entry.professional || '';
+          if (!byProfMap.has(key)) byProfMap.set(key, { label: key || UNIDENTIFIED, sub: '', entries: [] });
+          const row = byProfMap.get(key);
+          if (!row.sub && entry.specialty) row.sub = entry.specialty;
+          row.entries.push(entry);
+        });
+        const byProf = [...byProfMap.values()].sort((a, b) => a.label.localeCompare(b.label, 'pt-BR'));
+
+        const byMonthMap = new Map();
+        entries.forEach((entry) => {
+          if (!byMonthMap.has(entry.monthKey)) byMonthMap.set(entry.monthKey, { label: labelMonth(entry.monthKey), sub: '', entries: [] });
+          byMonthMap.get(entry.monthKey).entries.push(entry);
+        });
+        const byMonth = [...byMonthMap.values()].sort((a, b) => a.label.localeCompare(b.label, 'pt-BR'));
+
+        $('reportByProf').innerHTML = byProf.length ? reportTableHTML('Profissional', byProf) : '<div class="empty-list"><div class="empty-ficha"><strong>Sem dados para este recorte.</strong></div></div>';
+        $('reportByMonth').innerHTML = byMonth.length ? reportTableHTML('Mês', byMonth) : '<div class="empty-list"><div class="empty-ficha"><strong>Sem dados para este recorte.</strong></div></div>';
+        generatedReportText = `${reportTableTSV('Por profissional x situação', 'Profissional', byProf)}\n\n${reportTableTSV('Por mês x situação', 'Mês', byMonth)}`;
+      }
+
+      async function copyReport() {
+        if (!generatedReportText || !getScopedEntries().length) { showToast('Gere um recorte com resultados antes de copiar.', true); return; }
+        const text = generatedReportText;
+        try {
+          await navigator.clipboard.writeText(text);
+        } catch (error) {
+          const holder = document.createElement('textarea');
+          holder.value = text; document.body.appendChild(holder); holder.select(); document.execCommand('copy'); holder.remove();
+        }
+        showToast('Relatório copiado em formato de tabela. Você pode colá-lo em uma planilha ou documento.');
       }
 
       function toClipboardText() {
-        const lines = [['Usuário da Saúde', 'Cadastro', 'CPF', 'Telefone', 'Histórico (data e situação)']];
+        const lines = [['Usuário da Saúde', 'Cadastro', 'CPF', 'Telefone', 'Profissional', 'Especialidade', 'Histórico (data e situação)']];
         generatedRows.forEach((person) => lines.push([
           person.patient,
           person.citizenNumber || '',
           person.cpf || '',
           phoneNumbers(person.phones).join(' | '),
+          person.professional || '',
+          person.specialty || '',
           person.events.map((event) => `${event.dateDisplay} — ${event.status}`).join(' | ')
         ]));
         return lines.map((row) => row.map((value) => String(value).replace(/[\t\n]/g, ' ')).join('\t')).join('\n');
@@ -482,41 +687,70 @@
         const rawText = $('importText').value.trim();
         if (!rawText) { showToast('Cole primeiro a cópia da tela de agendamento.', true); return; }
         try {
-          const { months } = parseReport(rawText);
-          const conflicts = months.filter((month) => appState.reports.some((item) => item.monthKey === month.monthKey));
+          const { months, professional, specialty, expectedTotal } = parseReport(rawText);
+          const profName = $('profNameInput').value.trim() || professional;
+          const profSpec = $('profSpecInput').value.trim() || specialty;
+          let prof = appState.professionals.find((p) => (p.name || '').toLowerCase() === profName.toLowerCase());
+          if (!prof) {
+            prof = { name: profName, specialty: profSpec, reports: [] };
+            appState.professionals.push(prof);
+          } else if (profSpec && !prof.specialty) {
+            prof.specialty = profSpec;
+          }
+          months.forEach((month) => month.entries.forEach((entry) => { entry.professional = profName; entry.specialty = profSpec; }));
+          const conflicts = months.filter((month) => (prof.reports || []).some((item) => item.monthKey === month.monthKey));
           if (conflicts.length) {
             const names = conflicts.map((month) => labelMonth(month.monthKey)).join(', ');
             const question = conflicts.length === 1
-              ? `Já existe uma agenda de ${names}. Deseja substituí-la pela cópia que acabou de colar?`
-              : `Já existem agendas de ${names}. Deseja substituí-las pela cópia que acabou de colar?`;
+              ? `Já existe uma agenda de ${names} para ${profDisplay(prof)}. Deseja substituí-la pela cópia que acabou de colar?`
+              : `Já existem agendas de ${names} para ${profDisplay(prof)}. Deseja substituí-las pela cópia que acabou de colar?`;
             if (!window.confirm(question)) return;
           }
           const importedAt = new Date().toISOString();
           months.forEach((month) => {
-            appState.reports = appState.reports.filter((item) => item.monthKey !== month.monthKey);
-            appState.reports.push({ monthKey:month.monthKey, entries:month.entries, importedAt });
+            prof.reports = prof.reports.filter((item) => item.monthKey !== month.monthKey);
+            prof.reports.push({ monthKey:month.monthKey, entries:month.entries, importedAt, expectedTotal });
           });
-          persist(); $('importText').value = ''; updateMonthViews(); renderList();
+          persist(); $('importText').value = ''; $('profNameInput').value = ''; $('profSpecInput').value = '';
+          updateMonthViews();
+          $('profFilter').value = profDisplay(prof);
+          renderList(); renderReports();
           const totalEntries = months.reduce((sum, month) => sum + month.entries.length, 0);
           const monthNames = months.map((month) => labelMonth(month.monthKey)).join(', ');
-          const summary = months.length === 1
-            ? `${totalEntries} agendamentos de ${monthNames} foram incorporados.`
-            : `${totalEntries} agendamentos de ${months.length} meses (${monthNames}) foram incorporados.`;
+          let summary = months.length === 1
+            ? `${totalEntries} agendamentos de ${monthNames} (${profDisplay(prof)}) foram incorporados.`
+            : `${totalEntries} agendamentos de ${months.length} meses (${monthNames}) de ${profDisplay(prof)} foram incorporados.`;
+          if (expectedTotal && totalEntries < expectedTotal) {
+            summary += ` Atenção: o relatório informa ${expectedTotal} agendamentos e ${totalEntries} tinham usuário identificado.`;
+          }
           showToast(summary);
         } catch (error) { showToast(error.message || 'Não foi possível interpretar a cópia da agenda.', true); }
       });
       $('clearTextButton').addEventListener('click', () => { $('importText').value = ''; $('importText').focus(); });
       $('clearDataButton').addEventListener('click', () => {
-        if (!appState.reports.length) { showToast('Não há dados armazenados para limpar.'); return; }
-        if (window.confirm('Deseja apagar todos os meses armazenados neste navegador? Esta ação não pode ser desfeita.')) {
-          appState = { reports:[] }; persist(); generatedRows = []; updateMonthViews(); renderList(); showToast('Todos os dados locais foram apagados.');
+        if (!appState.professionals.length) { showToast('Não há dados armazenados para limpar.'); return; }
+        if (window.confirm('Deseja apagar todos os profissionais e meses armazenados neste navegador? Esta ação não pode ser desfeita.')) {
+          appState = { professionals:[] }; persist(); generatedRows = []; updateMonthViews(); renderList(); renderReports(); showToast('Todos os dados locais foram apagados.');
         }
       });
-      $('generateButton').addEventListener('click', renderList);
+      $('generateButton').addEventListener('click', () => { renderList(); renderReports(); });
+      $('profFilter').addEventListener('change', () => { updateMonthViews(); renderList(); renderReports(); });
       $('statusFilter').addEventListener('change', renderList);
       $('lastStatusFilter').addEventListener('change', renderList);
-      $('monthSelector').addEventListener('change', renderList);
+      $('monthSelector').addEventListener('change', () => { renderList(); renderReports(); });
       $('copyButton').addEventListener('click', copyList);
+      $('copyReportButton').addEventListener('click', copyReport);
+      $('profChips').addEventListener('click', (event) => {
+        const button = event.target.closest('[data-remove-prof]');
+        if (!button) return;
+        const name = button.getAttribute('data-remove-prof') || '';
+        const prof = appState.professionals.find((p) => profDisplay(p) === name);
+        if (!prof) return;
+        if (!window.confirm(`Excluir ${name} e todos os seus meses importados? Esta ação não pode ser desfeita.`)) return;
+        appState.professionals = appState.professionals.filter((p) => p !== prof);
+        persist(); $('profFilter').value = 'TODOS'; updateMonthViews(); renderList(); renderReports();
+        showToast(`${name} foi excluído.`);
+      });
       $('printButton').addEventListener('click', () => { if (!generatedRows.length) { showToast('Gere uma lista com resultados antes de imprimir.', true); return; } window.print(); });
       $('orderOptions').addEventListener('click', (event) => {
         const button = event.target.closest('.order-btn');
@@ -529,6 +763,7 @@
 
       updateMonthViews();
       renderList();
+      renderReports();
 
       // --- PWA: instalação e funcionamento offline ---
       if ('serviceWorker' in navigator) {
