@@ -97,6 +97,39 @@ Data: 2026-10-06
 - Versão 1.0.5.0→1.0.6.0 (+PrivacyNotice); wwwroot espelhado; repack+resign
   (~63 MB, 2 cópias); smoke test exe 20 s OK; push normal main+master.
 
+## Sessão 2026-10-08 (emojis WhatsApp + meses cronológicos + impressão separada, v1.0.7.0)
+
+### Pedido do dono (+ 3 URLs de exemplo)
+1. Emojis quebrados nos links (mostrou URLs corretas de Andresa Nicolino).
+2. Meses do relatório em ordem alfabética → cronológica.
+3. Relatório sai sempre no fim da impressão da Lista → botão de imprimir só ele.
+
+### Etapa 0 — emojis literais (CONCLUÍDA)
+- Mea-culpa parcial: os escapes `\u{}` decodificavam certo no Node, mas fonte
+  ilegível e risco à toa — troquei por emojis literais como no Avisador.
+- Teste byte-exato com os dados do exemplo do dono (Andresa Nicolino, 278930,
+  CANCELADO 09/10/2026 10:50, tel 11 99877-8751): mensagem idêntica à URL dele
+  e href com os mesmos bytes (%F0%9F%98%8A etc.).
+- Presunções mantidas e explicadas: {data}/{hora} vêm do evento no formato do
+  relatório (DD/MM/AAAA HH:MM, ex. "09/10/2026" e "10:50" — o "09/10" e "10h50"
+  do exemplo dele vêm dos dados do Avisador, não do nosso relatório); {cadastro}
+  = Nº Cidadão → CPF → "não informado"; usa o 1º telefone.
+
+### Etapa 1 — meses cronológicos (CONCLUÍDA)
+- Tabela "Por mês" ordenava pelo NOME do mês (Abril, Agosto, Fevereiro...);
+  agora ordena pelo monthKey AAAA-MM (cronológica). Uma linha.
+
+### Etapa 2 — impressão separada (CONCLUÍDA)
+- Botão "Imprimir relatório" na barra de relatórios: imprime SÓ os relatórios
+  (lista oculta via `print-reports-only`); impressão da Lista e Ctrl+P saem
+  SEM os relatórios (pedido do dono); `afterprint` limpa as classes.
+
+### Etapa 3 — testes + rebuild v1.0.7.0 (CONCLUÍDA)
+- Ordem cronológica conferida (Agosto antes de Setembro); botão de impressão
+  chama print 1x com a classe e limpa depois; 3 suítes verdes.
+- Versão 1.0.6.0→1.0.7.0 (+PrivacyNotice); wwwroot espelhado; repack+resign
+  (~63 MB, 2 cópias); smoke test exe 20 s OK; push normal main+master.
+
 ## Sessão 2026-10-08 (larguras + filtros + restyle caderno, v1.0.5.0)
 
 ### Pedido do dono (com 2 prints)

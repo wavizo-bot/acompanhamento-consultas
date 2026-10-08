@@ -182,7 +182,7 @@
     @media (max-width:960px) { .app-shell { grid-template-columns:1fr; } .sidebar { position:relative; height:auto; min-height:0; padding:23px 20px; } .main { padding:28px 20px 40px; } .filter-field, .filter-field.wide { flex:1 1 100%; } .filter-actions { justify-content:flex-end; margin-left:0; } }
     @media (max-width:620px) { .main-header, .list-toolbar, .section-heading { align-items:flex-start; flex-direction:column; } .storage-card { width:100%; } .toolbar-actions { width:100%; } .toolbar-actions .button { flex:1; } .main-title h2 { font-size:32px; } .filters { padding:16px; } }
     @media (prefers-reduced-motion:no-preference) { .month-chip { animation:chip-enter 180ms cubic-bezier(.23,1,.32,1) both; } @keyframes chip-enter { from { opacity:0; transform:translateY(5px); } to { opacity:1; transform:translateY(0); } } }
-    @media print { @page { margin:12mm; } body { background:#fff; font-size:10pt; } .sidebar, .month-panel, .filters, .storage-card, .toolbar-actions, .order-bar, .toast, #sidebarShowButton { display:none !important; } body.print-notes-only tr[data-has-note="0"] { display:none; } .app-shell { display:block; } .main { padding:0; } .main-header { margin:0 0 8px; } .main-title .eyebrow { margin-bottom:2px; font-size:8pt; } .main-title h2 { font-size:18pt; } .main-title p { display:none; } .list-panel { border:0; border-radius:0; box-shadow:none; } .list-toolbar { padding:0 0 6px; border-bottom:1px solid #777; } .list-toolbar p { display:none; } .list-summary { padding:4px 0; background:#fff; } .table-wrap { overflow:visible; } table { min-width:0; table-layout:fixed; } th { padding:6px 5px; background:#f3f3f3; font-size:8pt; } td { padding:6px 5px; } th:nth-child(1), td:nth-child(1) { width:22%; } th:nth-child(2), td:nth-child(2) { width:11%; } th:nth-child(3), td:nth-child(3) { width:12%; } th:nth-child(4), td:nth-child(4) { width:15%; } th:nth-child(5), td:nth-child(5) { width:40%; } table.cols-4 th:nth-child(1), table.cols-4 td:nth-child(1) { width:25%; } table.cols-4 th:nth-child(2), table.cols-4 td:nth-child(2) { width:12%; } table.cols-4 th:nth-child(3), table.cols-4 td:nth-child(3) { width:13%; } table.cols-4 th:nth-child(4), table.cols-4 td:nth-child(4) { width:50%; } .phone-line { color:inherit; } .events { min-width:0; } .event { padding:2px 3px; border:0; font-size:8pt; } .badge { font-size:7pt; } .note-input { border:1px solid #999; font-size:9pt; } }
+    @media print { @page { margin:12mm; } body { background:#fff; font-size:10pt; } .sidebar, .month-panel, .filters, .storage-card, .toolbar-actions, .order-bar, .toast, #sidebarShowButton, .report-panel { display:none !important; } body.print-reports-only .report-panel { display:block !important; } body.print-reports-only .list-panel { display:none !important; } body.print-notes-only tr[data-has-note="0"] { display:none; } .app-shell { display:block; } .main { padding:0; } .main-header { margin:0 0 8px; } .main-title .eyebrow { margin-bottom:2px; font-size:8pt; } .main-title h2 { font-size:18pt; } .main-title p { display:none; } .list-panel { border:0; border-radius:0; box-shadow:none; } .list-toolbar { padding:0 0 6px; border-bottom:1px solid #777; } .list-toolbar p { display:none; } .list-summary { padding:4px 0; background:#fff; } .table-wrap { overflow:visible; } table { min-width:0; table-layout:fixed; } th { padding:6px 5px; background:#f3f3f3; font-size:8pt; } td { padding:6px 5px; } th:nth-child(1), td:nth-child(1) { width:22%; } th:nth-child(2), td:nth-child(2) { width:11%; } th:nth-child(3), td:nth-child(3) { width:12%; } th:nth-child(4), td:nth-child(4) { width:15%; } th:nth-child(5), td:nth-child(5) { width:40%; } table.cols-4 th:nth-child(1), table.cols-4 td:nth-child(1) { width:25%; } table.cols-4 th:nth-child(2), table.cols-4 td:nth-child(2) { width:12%; } table.cols-4 th:nth-child(3), table.cols-4 td:nth-child(3) { width:13%; } table.cols-4 th:nth-child(4), table.cols-4 td:nth-child(4) { width:50%; } .phone-line { color:inherit; } .events { min-width:0; } .event { padding:2px 3px; border:0; font-size:8pt; } .badge { font-size:7pt; } .note-input { border:1px solid #999; font-size:9pt; } }
   </style>
 </head>
 <body>
@@ -314,7 +314,7 @@
       <section class="report-panel" aria-labelledby="reportHeading">
         <div class="section-heading">
           <div><h3 id="reportHeading">Relatórios</h3><p>Totais no mesmo recorte de profissional e meses da lista (ignora os filtros de situação).</p></div>
-          <div class="toolbar-actions"><button class="button button-outline" id="copyReportButton" type="button">Copiar relatório</button></div>
+          <div class="toolbar-actions"><button class="button button-outline" id="copyReportButton" type="button">Copiar relatório</button><button class="button button-print" id="reportPrintButton" type="button">Imprimir relatório</button></div>
         </div>
         <p class="report-scope" id="reportScope">Importe uma agenda para gerar os relatórios.</p>
         <div class="report-table-wrap"><h4>Por profissional × situação</h4><div id="reportByProf"></div></div>
@@ -633,10 +633,11 @@
 
       // Etiquetas: {nomedopaciente} {cadastro} {data} {hora} — substituídas por
       // pessoa/evento e enviadas via wa.me (convenção do Avisador CF2A).
+      // Emojis literais (não escapes \u{}): byte a byte igual ao exemplo do dono.
       const WA_TEMPLATES = {
-        AGENDADO: 'Olá, {nomedopaciente}! \u{1F60A} Cadastro: {cadastro}\n\n\u{1F4C5} Lembrete de agendamento: Você tem consulta marcada para {data} às {hora}\n\n\u26A0\uFE0F Pedimos, por gentileza, que não cancele no dia. Quando isso acontece, a vaga é perdida e outra pessoa deixa de ser atendida. Contamos com você! \u{1F64F}\n\n\u{1F9B7}\u200D\u2640\uFE0F Dentista, Enfermeira e Médica: Vagas limitadas para atendimento no mesmo dia, por ordem de chegada, a partir das 7h\n\u{1F469}\u200D\u2640\uFE0F Enfermeira e Médica: Também temos vagas para outros dias. O agendamento é feito pessoalmente, até as 17h\n\n\u{1F4F2} Esse é meu número pessoal.\n\n\u{1F3E5} Clínica da Família II (antiga UBS Almerinda)',
-        CANCELADO: 'Olá, {nomedopaciente}! \u{1F60A} Cadastro: {cadastro}\n\n\u{1F4C5} Informamos que o seu agendamento para o dia {data} às {hora} foi cancelado.\n\n\u26A0\uFE0F Assim que uma nova vaga estiver disponível, entraremos em contato para reagendar. Pedimos, por gentileza, que aguarde nosso aviso. Contamos com sua compreensão! \u{1F64F}\n\n\u{1F4F2} Esse é meu número pessoal.\n\n\u{1F3E5} Clínica da Família II (antiga UBS Almerinda)',
-        FALTOU: 'Olá, {nomedopaciente}! \u{1F60A} Cadastro: {cadastro}\n\n\u{1F4C5} Constatamos que você não compareceu ao seu agendamento do dia {data} às {hora}.\n\n\u26A0\uFE0F Gostaríamos de saber o motivo da falta, pois isso nos ajuda a organizar melhor o atendimento e a oferecer a vaga para outras pessoas. Pedimos, por gentileza, que responda esta mensagem. Contamos com sua colaboração! \u{1F64F}\n\n\u{1F4F2} Esse é meu número pessoal.\n\n\u{1F3E5} Clínica da Família II (antiga UBS Almerinda)'
+        AGENDADO: 'Olá, {nomedopaciente}! 😊 Cadastro: {cadastro}\n\n📅 Lembrete de agendamento: Você tem consulta marcada para {data} às {hora}\n\n⚠️ Pedimos, por gentileza, que não cancele no dia. Quando isso acontece, a vaga é perdida e outra pessoa deixa de ser atendida. Contamos com você! 🙏\n\n🦷👩‍⚕️ Dentista, Enfermeira e Médica: Vagas limitadas para atendimento no mesmo dia, por ordem de chegada, a partir das 7h\n👩‍⚕️ Enfermeira e Médica: Também temos vagas para outros dias. O agendamento é feito pessoalmente, até as 17h\n\n📲 Esse é meu número pessoal.\n\n🏥 Clínica da Família II (antiga UBS Almerinda)',
+        CANCELADO: 'Olá, {nomedopaciente}! 😊 Cadastro: {cadastro}\n\n📅 Informamos que o seu agendamento para o dia {data} às {hora} foi cancelado.\n\n⚠️ Assim que uma nova vaga estiver disponível, entraremos em contato para reagendar. Pedimos, por gentileza, que aguarde nosso aviso. Contamos com sua compreensão! 🙏\n\n📲 Esse é meu número pessoal.\n\n🏥 Clínica da Família II (antiga UBS Almerinda)',
+        FALTOU: 'Olá, {nomedopaciente}! 😊 Cadastro: {cadastro}\n\n📅 Constatamos que você não compareceu ao seu agendamento do dia {data} às {hora}.\n\n⚠️ Gostaríamos de saber o motivo da falta, pois isso nos ajuda a organizar melhor o atendimento e a oferecer a vaga para outras pessoas. Pedimos, por gentileza, que responda esta mensagem. Contamos com sua colaboração! 🙏\n\n📲 Esse é meu número pessoal.\n\n🏥 Clínica da Família II (antiga UBS Almerinda)'
       };
 
       function waLinkFor(person, event) {
@@ -777,10 +778,10 @@
 
         const byMonthMap = new Map();
         entries.forEach((entry) => {
-          if (!byMonthMap.has(entry.monthKey)) byMonthMap.set(entry.monthKey, { label: labelMonth(entry.monthKey), sub: '', entries: [] });
+          if (!byMonthMap.has(entry.monthKey)) byMonthMap.set(entry.monthKey, { key: entry.monthKey, label: labelMonth(entry.monthKey), sub: '', entries: [] });
           byMonthMap.get(entry.monthKey).entries.push(entry);
         });
-        const byMonth = [...byMonthMap.values()].sort((a, b) => a.label.localeCompare(b.label, 'pt-BR'));
+        const byMonth = [...byMonthMap.values()].sort((a, b) => String(a.key).localeCompare(String(b.key)));
 
         // Colunas de situação totalmente zeradas no recorte são ocultadas.
         const grandCounts = countByStatus(entries);
@@ -929,7 +930,13 @@
       }
       $('printButton').addEventListener('click', doPrint);
       window.addEventListener('beforeprint', () => { document.body.classList.toggle('print-notes-only', !!($('onlyNotesPrint') && $('onlyNotesPrint').checked)); });
-      window.addEventListener('afterprint', () => { document.body.classList.remove('print-notes-only'); });
+      window.addEventListener('afterprint', () => { document.body.classList.remove('print-notes-only'); document.body.classList.remove('print-reports-only'); });
+      $('reportPrintButton').addEventListener('click', () => {
+        const inScope = getScopedEntries().filter((entry) => getSelectedMonths().includes(entry.monthKey));
+        if (!inScope.length) { showToast('Gere um recorte com resultados antes de imprimir.', true); return; }
+        document.body.classList.add('print-reports-only');
+        window.print();
+      });
       $('orderOptions').addEventListener('click', (event) => {
         const button = event.target.closest('.order-btn');
         if (!button) return;
