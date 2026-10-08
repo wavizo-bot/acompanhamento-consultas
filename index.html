@@ -23,6 +23,11 @@
     button { border:0; cursor:pointer; }
     button:focus-visible, select:focus-visible, textarea:focus-visible, input:focus-visible { outline:3px solid rgba(22,99,91,.35); outline-offset:2px; }
     .app-shell { min-height:100vh; display:grid; grid-template-columns:340px minmax(0,1fr); }
+    body.sidebar-hidden .app-shell { grid-template-columns:1fr; }
+    body.sidebar-hidden .sidebar { display:none; }
+    .sidebar-head-row { display:flex; justify-content:flex-end; margin-bottom:12px; }
+    #sidebarShowButton { position:fixed; top:12px; left:12px; z-index:60; display:none; box-shadow:0 6px 18px rgba(0,0,0,.18); }
+    body.sidebar-hidden #sidebarShowButton { display:inline-flex; }
     .sidebar { position:sticky; top:0; height:100vh; padding:28px 24px; color:#f8fbf9; background:#164b47; overflow:auto; }
     .sidebar::before { content:""; position:absolute; inset:0; background:repeating-linear-gradient(165deg, rgba(255,255,255,.028) 0 1px, transparent 1px 12px), linear-gradient(180deg, rgba(14,65,60,.94), rgba(15,72,66,.91)); pointer-events:none; }
     .sidebar > * { position:relative; }
@@ -77,7 +82,10 @@
     .month-chip::before { content:"ARQ"; color:#66867e; font-size:9px; letter-spacing:.08em; }
     .month-chip .chip-count { min-width:18px; padding:1px 5px; border-radius:999px; color:#fff; background:var(--teal); font-size:11px; text-align:center; }
     .empty-months { display:flex; align-items:center; min-height:37px; color:var(--muted); font-size:13px; font-style:italic; }
-    .filters { position:relative; display:grid; grid-template-columns:minmax(160px,.7fr) minmax(150px,.7fr) minmax(150px,.7fr) minmax(260px,1.2fr) auto; gap:14px; align-items:end; margin-bottom:17px; padding:42px 20px 19px; border:1px solid var(--line); border-radius:var(--radius); background:#eef2ed; }
+    .filters { position:relative; display:flex; flex-wrap:wrap; gap:14px 16px; align-items:flex-end; margin-bottom:17px; padding:42px 20px 19px; border:1px solid var(--line); border-radius:var(--radius); background:#eef2ed; }
+    .filter-field { flex:1 1 160px; min-width:150px; }
+    .filter-field.wide { flex:2 1 280px; }
+    .filter-actions { flex:0 0 auto; margin-left:auto; }
     .filters::before { content:"SELEÇÃO DE ARQUIVO · DEFINA O RECORTE DO HISTÓRICO"; position:absolute; top:0; right:0; left:0; padding:9px 20px; color:#557069; border-bottom:1px solid #d8dfd8; font-size:10px; font-weight:800; letter-spacing:.1em; }
     .filter-field label { display:block; margin:0 0 6px; color:#334b49; font-size:12px; font-weight:700; letter-spacing:.03em; }
     .filter-field select { width:100%; min-height:39px; padding:8px 10px; color:var(--ink); border:1px solid #bcc8c1; border-radius:9px; background:#fffdf8; }
@@ -116,6 +124,7 @@
     .phone-line { display:block; font-size:13px; line-height:1.55; letter-spacing:.02em; color:var(--teal); text-decoration:none; }
     .phone-line:hover { text-decoration:underline; }
     .events { display:flex; flex-wrap:wrap; gap:6px; min-width:360px; }
+    .note-input { display:block; width:100%; min-width:220px; min-height:54px; padding:8px 10px; color:var(--ink); border:1px dashed #aac7be; border-radius:9px; background:#f4faf7; resize:vertical; }
     .event { display:inline-flex; align-items:center; gap:5px; padding:5px 7px; border:1px solid #d5ddd7; border-radius:7px; background:#fff; font-size:12px; white-space:nowrap; }
     .event-date { color:#596b69; font-variant-numeric:tabular-nums; }
     .badge { display:inline-flex; padding:2px 5px; border:1px solid currentColor; border-radius:2px; font-size:10px; font-weight:800; letter-spacing:.03em; text-transform:uppercase; }
@@ -150,15 +159,16 @@
     .report-table-wrap table { min-width:640px; }
     .report-table-wrap td:first-child, .report-table-wrap th:first-child { position:sticky; left:0; background:#fffdf8; }
     .report-total td { font-weight:700; background:#f0f7f3; }
-    @media (max-width:960px) { .app-shell { grid-template-columns:1fr; } .sidebar { position:relative; height:auto; min-height:0; padding:23px 20px; } .main { padding:28px 20px 40px; } .filters { grid-template-columns:1fr; } .filter-actions { justify-content:flex-end; } }
+    @media (max-width:960px) { .app-shell { grid-template-columns:1fr; } .sidebar { position:relative; height:auto; min-height:0; padding:23px 20px; } .main { padding:28px 20px 40px; } .filter-field, .filter-field.wide { flex:1 1 100%; } .filter-actions { justify-content:flex-end; margin-left:0; } }
     @media (max-width:620px) { .main-header, .list-toolbar, .section-heading { align-items:flex-start; flex-direction:column; } .storage-card { width:100%; } .toolbar-actions { width:100%; } .toolbar-actions .button { flex:1; } .main-title h2 { font-size:32px; } .filters { padding:16px; } }
     @media (prefers-reduced-motion:no-preference) { .month-chip { animation:chip-enter 180ms cubic-bezier(.23,1,.32,1) both; } @keyframes chip-enter { from { opacity:0; transform:translateY(5px); } to { opacity:1; transform:translateY(0); } } }
-    @media print { @page { margin:12mm; } body { background:#fff; font-size:10pt; } .sidebar, .month-panel, .filters, .storage-card, .toolbar-actions, .order-bar, .toast { display:none !important; } .app-shell { display:block; } .main { padding:0; } .main-header { margin:0 0 14px; } .main-title .eyebrow { margin-bottom:3px; } .main-title h2 { font-size:25pt; } .main-title p { font-size:10pt; } .list-panel { border:0; border-radius:0; box-shadow:none; } .list-toolbar { padding:0 0 10px; border-bottom:1px solid #777; } .list-summary { padding:8px 0; background:#fff; } .table-wrap { overflow:visible; } table { min-width:0; table-layout:fixed; } th { padding:7px 5px; background:#f3f3f3; font-size:8pt; } td { padding:8px 5px; } th:nth-child(1), td:nth-child(1) { width:22%; } th:nth-child(2), td:nth-child(2) { width:11%; } th:nth-child(3), td:nth-child(3) { width:12%; } th:nth-child(4), td:nth-child(4) { width:15%; } th:nth-child(5), td:nth-child(5) { width:40%; } .phone-line { color:inherit; } .events { min-width:0; } .event { padding:2px 3px; border:0; font-size:8pt; } .badge { font-size:7pt; } }
+    @media print { @page { margin:12mm; } body { background:#fff; font-size:10pt; } .sidebar, .month-panel, .filters, .storage-card, .toolbar-actions, .order-bar, .toast, #sidebarShowButton { display:none !important; } .app-shell { display:block; } .main { padding:0; } .main-header { margin:0 0 8px; } .main-title .eyebrow { margin-bottom:2px; font-size:8pt; } .main-title h2 { font-size:18pt; } .main-title p { display:none; } .list-panel { border:0; border-radius:0; box-shadow:none; } .list-toolbar { padding:0 0 6px; border-bottom:1px solid #777; } .list-toolbar p { display:none; } .list-summary { padding:4px 0; background:#fff; } .table-wrap { overflow:visible; } table { min-width:0; table-layout:fixed; } th { padding:6px 5px; background:#f3f3f3; font-size:8pt; } td { padding:6px 5px; } th:nth-child(1), td:nth-child(1) { width:22%; } th:nth-child(2), td:nth-child(2) { width:11%; } th:nth-child(3), td:nth-child(3) { width:12%; } th:nth-child(4), td:nth-child(4) { width:15%; } th:nth-child(5), td:nth-child(5) { width:40%; } table.cols-4 th:nth-child(1), table.cols-4 td:nth-child(1) { width:25%; } table.cols-4 th:nth-child(2), table.cols-4 td:nth-child(2) { width:12%; } table.cols-4 th:nth-child(3), table.cols-4 td:nth-child(3) { width:13%; } table.cols-4 th:nth-child(4), table.cols-4 td:nth-child(4) { width:50%; } .phone-line { color:inherit; } .events { min-width:0; } .event { padding:2px 3px; border:0; font-size:8pt; } .badge { font-size:7pt; } .note-input { border:1px solid #999; font-size:9pt; } }
   </style>
 </head>
 <body>
   <div class="app-shell">
     <aside class="sidebar" aria-label="Importação e armazenamento local">
+      <div class="sidebar-head-row"><button class="button button-subtle" id="sidebarHideButton" type="button">◀ Ocultar painel</button></div>
       <div class="brand">
         <span class="brand-mark" aria-hidden="true"></span>
         <div><p>Registro local</p><h1>Acompanhamento<br>de Consultas</h1></div>
@@ -216,7 +226,7 @@
       </section>
 
       <section class="filters" aria-label="Filtros da lista de acompanhamento">
-        <div class="filter-field">
+        <div class="filter-field wide">
           <label>Profissionais a mostrar</label>
           <div class="month-selector" id="profSelector"><span class="empty-months">Importe ao menos uma agenda para habilitar este filtro.</span></div>
           <label for="viewMode" style="margin-top:8px;">Visão da lista</label>
@@ -255,7 +265,7 @@
             <option value="NÃO REALIZADO">NÃO REALIZADO</option>
           </select>
         </div>
-        <div class="filter-field">
+        <div class="filter-field wide">
           <label>Meses a mostrar</label>
           <div class="month-selector" id="monthSelector"><span class="empty-months">Importe ao menos uma agenda para habilitar este filtro.</span></div>
         </div>
@@ -265,7 +275,7 @@
       <section class="list-panel" aria-labelledby="listHeading">
         <div class="list-toolbar">
           <div><h3 id="listHeading">Lista de acompanhamento</h3><p>Uma pessoa por linha, com a sequência de datas e situações encontradas.</p></div>
-          <div class="toolbar-actions"><button class="button button-outline" id="copyButton" type="button">Copiar lista</button><button class="button button-print" id="printButton" type="button">Imprimir</button></div>
+          <div class="toolbar-actions"><button class="button button-outline" id="notesModeButton" type="button">Modo anotações</button><button class="button button-outline" id="copyButton" type="button">Copiar lista</button><button class="button button-print" id="printButton" type="button">Imprimir</button></div>
         </div>
         <div class="order-bar" aria-label="Ordenação da lista">
           <span class="order-label">Ordem</span>
@@ -294,6 +304,7 @@
       </section>
     </main>
   </div>
+  <button class="button button-outline" id="sidebarShowButton" type="button">Mostrar painel ▶</button>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
   <script>
     /* Prontuário de Mesa: processamento local, sem rede, com rastreabilidade por mês. */
@@ -306,6 +317,30 @@
       let generatedRows = [];
       let toastTimer;
       let currentOrder = 'alpha';
+      const UI_KEY = 'acompanhamento-ui';
+      let ui = loadUI();
+
+      function loadUI() {
+        try {
+          const parsed = JSON.parse(localStorage.getItem(UI_KEY) || '{}');
+          return { sidebarHidden: !!parsed.sidebarHidden, notesMode: !!parsed.notesMode };
+        } catch (error) {
+          return { sidebarHidden: false, notesMode: false };
+        }
+      }
+
+      function persistUI() {
+        try { localStorage.setItem(UI_KEY, JSON.stringify(ui)); } catch (error) { /* sem espaço? segue sem salvar preferência */ }
+      }
+
+      function applyUI() {
+        document.body.classList.toggle('sidebar-hidden', !!ui.sidebarHidden);
+        const notesButton = $('notesModeButton');
+        if (notesButton) {
+          notesButton.classList.toggle('active', !!ui.notesMode);
+          notesButton.textContent = ui.notesMode ? 'Sair do modo anotações' : 'Modo anotações';
+        }
+      }
 
       const $ = (id) => document.getElementById(id);
       const esc = (value) => String(value ?? '').replace(/[&<>"']/g, (char) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[char]));
@@ -316,16 +351,17 @@
           if (raw) {
             const parsed = JSON.parse(raw);
             const professionals = Array.isArray(parsed.professionals) ? parsed.professionals : [];
-            return { professionals: professionals.filter((p) => p && typeof p.name === 'string' && Array.isArray(p.reports)) };
+            const notes = parsed.notes && typeof parsed.notes === 'object' ? parsed.notes : {};
+            return { professionals: professionals.filter((p) => p && typeof p.name === 'string' && Array.isArray(p.reports)), notes };
           }
           // Migração do formato antigo (v1: meses sem profissional).
           const legacy = JSON.parse(localStorage.getItem(LEGACY_KEY) || 'null');
           if (legacy && Array.isArray(legacy.reports) && legacy.reports.length) {
-            return { professionals: [{ name: '', specialty: '', reports: legacy.reports }] };
+            return { professionals: [{ name: '', specialty: '', reports: legacy.reports }], notes: {} };
           }
-          return { professionals: [] };
+          return { professionals: [], notes: {} };
         } catch (error) {
-          return { professionals: [] };
+          return { professionals: [], notes: {} };
         }
       }
 
@@ -530,7 +566,7 @@
         const groups = new Map();
         displayed.forEach((entry) => {
           const key = joinProfs ? identityFor(entry) : `${entry.professional || ''}|${identityFor(entry)}`;
-          if (!groups.has(key)) groups.set(key, { patient:entry.patient, citizenNumber:entry.citizenNumber, cpf:entry.cpf, cns:entry.cns, phones:entry.phones, professional:entry.professional || '', specialty:entry.specialty || '', professionals:[], events:[] });
+          if (!groups.has(key)) groups.set(key, { patient:entry.patient, citizenNumber:entry.citizenNumber, cpf:entry.cpf, cns:entry.cns, phones:entry.phones, professional:entry.professional || '', specialty:entry.specialty || '', professionals:[], events:[], noteKey:identityFor(entry) });
           const person = groups.get(key);
           const profName = entry.professional || UNIDENTIFIED;
           if (!person.professionals.some((p) => p.name === profName)) {
@@ -578,6 +614,8 @@
 
       function renderList() {
         generatedRows = sortPeople(collectRows(), currentOrder);
+        const singleProf = getScopedProfessionals().length === 1;
+        const notesMode = !!ui.notesMode;
         const selectedMonths = getSelectedMonths();
         const statusFilter = $('statusFilter').value;
         const lastStatusFilter = $('lastStatusFilter').value;
@@ -602,9 +640,12 @@
           const profCell = person.professionals.length
             ? person.professionals.map((p) => `<span class="person-name">${esc(p.name)}</span>${p.specialty ? `<span class="person-detail">${esc(p.specialty)}</span>` : ''}`).join('')
             : '<span class="person-detail">Não identificado</span>';
-          return `<tr><td><span class="person-name">${esc(person.patient)}</span><span class="person-detail">CPF: ${esc(person.cpf || 'não identificado')}</span></td><td class="cell-id">${esc(id)}</td><td class="phone-cell">${phoneCell}</td><td>${profCell}</td><td><div class="events">${events}</div></td></tr>`;
+          const lastCell = notesMode
+            ? `<textarea class="note-input" data-note-key="${esc(person.noteKey)}" placeholder="Escrever decisão..." rows="2">${esc(appState.notes[person.noteKey] || '')}</textarea>`
+            : `<div class="events">${events}</div>`;
+          return `<tr><td><span class="person-name">${esc(person.patient)}</span><span class="person-detail">CPF: ${esc(person.cpf || 'não identificado')}</span></td><td class="cell-id">${esc(id)}</td><td class="phone-cell">${phoneCell}</td>${singleProf ? '' : `<td>${profCell}</td>`}<td>${lastCell}</td></tr>`;
         }).join('');
-        list.innerHTML = `<table><thead><tr><th>Usuário da Saúde</th><th>Cadastro</th><th>Telefone</th><th>Profissional</th><th>Data e situação</th></tr></thead><tbody>${body}</tbody></table>`;
+        list.innerHTML = `<table${singleProf ? ' class="cols-4"' : ''}><thead><tr><th>Usuário da Saúde</th><th>Cadastro</th><th>Telefone</th>${singleProf ? '' : '<th>Profissional</th>'}${notesMode ? '<th>Decisão</th>' : '<th>Data e situação</th>'}</tr></thead><tbody>${body}</tbody></table>`;
       }
 
       let generatedReportText = '';
@@ -717,16 +758,24 @@
       }
 
       function toClipboardText() {
-        const lines = [['Usuário da Saúde', 'Cadastro', 'CPF', 'Telefone', 'Profissional', 'Especialidade', 'Histórico (data e situação)']];
-        generatedRows.forEach((person) => lines.push([
-          person.patient,
-          person.citizenNumber || '',
-          person.cpf || '',
-          phoneNumbers(person.phones).join(' | '),
-          person.professionals.map((p) => p.name).join(' | '),
-          [...new Set(person.professionals.map((p) => p.specialty).filter(Boolean))].join(' | '),
-          person.events.map((event) => `${event.dateDisplay} — ${event.status}`).join(' | ')
-        ]));
+        const singleProf = getScopedProfessionals().length === 1;
+        const header = ['Usuário da Saúde', 'Cadastro', 'CPF', 'Telefone'];
+        if (!singleProf) header.push('Profissional', 'Especialidade');
+        header.push('Histórico (data e situação)');
+        header.push('Decisão');
+        const lines = [header];
+        generatedRows.forEach((person) => {
+          const row = [
+            person.patient,
+            person.citizenNumber || '',
+            person.cpf || '',
+            phoneNumbers(person.phones).join(' | ')
+          ];
+          if (!singleProf) row.push(person.professionals.map((p) => p.name).join(' | '), [...new Set(person.professionals.map((p) => p.specialty).filter(Boolean))].join(' | '));
+          row.push(person.events.map((event) => `${event.dateDisplay} — ${event.status}`).join(' | '));
+          row.push(appState.notes[person.noteKey] || '');
+          lines.push(row);
+        });
         return lines.map((row) => row.map((value) => String(value).replace(/[\t\n]/g, ' ')).join('\t')).join('\n');
       }
 
@@ -789,7 +838,7 @@
       $('clearDataButton').addEventListener('click', () => {
         if (!appState.professionals.length) { showToast('Não há dados armazenados para limpar.'); return; }
         if (window.confirm('Deseja apagar todos os profissionais e meses armazenados neste navegador? Esta ação não pode ser desfeita.')) {
-          appState = { professionals:[] }; persist(); generatedRows = []; updateMonthViews(); renderList(); renderReports(); showToast('Todos os dados locais foram apagados.');
+          appState = { professionals:[], notes:{} }; persist(); generatedRows = []; updateMonthViews(); renderList(); renderReports(); showToast('Todos os dados locais foram apagados.');
         }
       });
       $('generateButton').addEventListener('click', () => { renderList(); renderReports(); });
@@ -799,6 +848,19 @@
       $('lastStatusFilter').addEventListener('change', renderList);
       $('monthSelector').addEventListener('change', () => { renderList(); renderReports(); });
       $('copyButton').addEventListener('click', copyList);
+      $('notesModeButton').addEventListener('click', () => { ui.notesMode = !ui.notesMode; persistUI(); applyUI(); renderList(); });
+      $('listContainer').addEventListener('change', (event) => {
+        const target = event.target && event.target.closest ? event.target.closest('.note-input') : null;
+        if (!target) return;
+        const key = target.getAttribute('data-note-key') || '';
+        if (!key) return;
+        const value = target.value || '';
+        if (value.trim()) appState.notes[key] = value;
+        else delete appState.notes[key];
+        persist();
+      });
+      $('sidebarHideButton').addEventListener('click', () => { ui.sidebarHidden = true; persistUI(); applyUI(); });
+      $('sidebarShowButton').addEventListener('click', () => { ui.sidebarHidden = false; persistUI(); applyUI(); });
       $('copyReportButton').addEventListener('click', copyReport);
       $('profChips').addEventListener('click', (event) => {
         const button = event.target.closest('[data-remove-prof]');
@@ -821,6 +883,7 @@
         renderList();
       });
 
+      applyUI();
       updateMonthViews();
       renderList();
       renderReports();

@@ -24,7 +24,7 @@ Properties/DisplayName (NOME RESERVADO na Store) ... SlSS Acompanhamento de cons
 Package Family Name (PFN) ..... wavizo.SlSSAcompanhamentodeconsultas_c5p81jb0en0bm
 Package SID ................... S-1-15-2-4129138387-2334821746-3998454584-887326526-397364692-819623371-1943786192
 Store ID ...................... 9NCM6HXTK486
-AppxManifest Version .......... 1.0.3.0, arch x64, TargetDeviceFamily
+AppxManifest Version .......... 1.0.4.0, arch x64, TargetDeviceFamily
                                 Windows.Desktop, Min 10.0.19041.0, MaxTested 10.0.22621.0
 Capabilities .................. internetClient (exigido pelo WebView2) +
                                 rescap:runFullTrust (host .NET)

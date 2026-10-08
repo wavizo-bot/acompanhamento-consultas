@@ -56,6 +56,58 @@ Data: 2026-10-06
 
 ---
 
+## Sessão 2026-10-08 (layout + sidebar + coluna única + anotações, v1.0.4.0)
+
+### Regras ativas (C:\APPS\Regras.txt)
+- manual.txt e log.txt atualizados; log fracionado por etapa; arquivos legais
+  avaliados (sem novidade: anotações ficam no localStorage como o resto,
+  nada a mudar em politica/termos).
+
+### Pedido do dono (com 2 prints)
+1. Bloco SELEÇÃO DE ARQUIVO com área central vazia; impressão desperdiça espaço.
+2. Ocultar a barra lateral esquerda quando não estiver em uso.
+3. Com 1 só profissional no recorte, sumir com a coluna que repete o nome dele.
+4. Modo de anotações: botão troca os span.event por campo de texto
+   ("Agendar retorno"); imprimir/visualizar pessoa + cadastro + telefone + decisão.
+
+### Etapa 0 — layout e impressão (CONCLUÍDA)
+- `.filters` de grid rígido (5 colunas → vazio central) para flex com wrap:
+  Profissionais e Meses (`wide`) dividem a 1ª linha, selects e Gerar fluem
+  sem buracos; no mobile empilha 100%.
+- Impressão compactada: esconde parágrafo de descrição e subtítulo da lista,
+  título 25→18pt, paddings reduzidos, larguras p/ tabela de 4 e 5 colunas
+  (`table.cols-4`).
+
+### Etapa 1 — ocultar barra lateral (CONCLUÍDA)
+- Botão "◀ Ocultar painel" no topo da sidebar + botão flutuante
+  "Mostrar painel ▶" (só aparece com ela oculta); preferência salva em
+  localStorage (`acompanhamento-ui`) e restaurada ao abrir; fora da impressão.
+
+### Etapa 2 — coluna Profissional condicional (CONCLUÍDA)
+- Com 1 só profissional no recorte (único carregado ou único marcado), a
+  coluna some da tabela, do TSV e a tabela ganha `cols-4` (larguras de
+  impressão próprias); com 2+, tudo como era.
+
+### Etapa 3 — modo anotações (CONCLUÍDA)
+- Botão "Modo anotações" na barra da lista troca a coluna de eventos por um
+  campo de texto por pessoa ("Escrever decisão..."); salva ao sair do campo
+  em `notes` no localStorage (chave = identidade da pessoa, vale nas duas
+  visões e entre sessões; some junto no "Limpar todos os dados").
+- Impressão mostra Nome + Cadastro + Telefone + Decisão (textarea imprime o
+  conteúdo; botão some no papel); TSV ganhou coluna Decisão sempre.
+- Modo ligado/desligado persiste em `acompanhamento-ui` com o rótulo do botão
+  ("Sair do modo anotações") e destaque `active`.
+- Presunção: Decisão no TSV mesmo fora do modo (coluna vazia quando sem nota).
+
+### Etapa 4 — testes + rebuild v1.0.4.0 (CONCLUÍDA)
+- Harness estendido e tudo verde: coluna some com 1 prof (thead 4 cols,
+  `cols-4`, TSV sem Profissional) e volta com 2+; modo anotações (coluna
+  Decisão, salvar, reexibir após render, apagar quando vazio); sidebar
+  alterna classe e persiste; suítes antigas (multi-prof, relatórios, NÃO
+  FINALIZADO, migração) seguem passando.
+- Versão 1.0.3.0→1.0.4.0 (+PrivacyNotice); wwwroot espelhado; repack+resign
+  (~63 MB, 2 cópias); smoke test exe 20 s OK; push normal main+master.
+
 ## Sessão 2026-10-08 (relatórios v2 + seleção inclusiva, v1.0.3.0)
 
 ### Regras ativas (C:\APPS\Regras.txt)
