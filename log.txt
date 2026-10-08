@@ -56,6 +56,47 @@ Data: 2026-10-06
 
 ---
 
+## Sessão 2026-10-08 (ordem filtros + impressão anotadas + WhatsApp, v1.0.6.0)
+
+### Pedido do dono
+1. "Última situação" aparecendo entre Profissionais e Meses; na maquete ASCII
+   vai abaixo de "Contém situação" (coluna fixa à esquerda).
+2. No modo de anotações, poder imprimir SÓ quem tem anotação.
+3. span.event de AGENDADO/FALTOU/CANCELADO vira hyperlink WhatsApp com mensagem
+   pronta e etiquetas {nomedopaciente} {cadastro} {data} {hora}; apontou o
+   "Avisador de consultas CF2A" como referência.
+4. Confirmar que entendo o uso das etiquetas {}.
+
+### Etapa 0 — ordem + pesquisa Avisador (CONCLUÍDA)
+- Filtros reordenados: fixa[Visão, Contém, Última] + Profissionais + Meses.
+- Avisador (FullAutoMensagensWhatsapp_v7.html): hyperlink
+  `https://wa.me/55${phone}?text=${encodeURIComponent(messageText)}`,
+  telefone só-dígitos, tags {nome}{cadastro}{data}{horario} substituídas no
+  template — mesma convenção adotada aqui.
+
+### Etapa 1 — imprimir só anotadas (CONCLUÍDA)
+- Checkbox "Imprimir só anotadas" na barra da lista (visível só no modo
+  anotações); cada linha carrega `data-has-note`; na impressão as sem nota
+  somem via CSS (`beforeprint` cobre Ctrl+P); atributo atualizado ao digitar,
+  sem precisar gerar a lista de novo. Opção é da sessão (não persiste).
+
+### Etapa 2 — eventos como links WhatsApp (CONCLUÍDA)
+- Eventos AGENDADO/CANCELADO/FALTOU com telefone viram `<a>` p/
+  `wa.me/55<primeiro telefone>?text=<mensagem>` (textos exatos do dono,
+  etiquetas {nomedopaciente}{cadastro}{data}{hora} via replaceAll +
+  encodeURIComponent); sem telefone ou outro status = span como era.
+- {cadastro} = Nº Cidadão, cai p/ CPF, senão "não informado"; {data}/{hora}
+  vêm do próprio evento (DD/MM/AAAA HH:MM); usa o 1º telefone da pessoa.
+- Visual: mesma pílula, sublinha no hover; impressão inalterada (sai o texto).
+
+### Etapa 3 — testes + rebuild v1.0.6.0 (CONCLUÍDA)
+- Ordem dos filtros conferida no HTML; links validados de ponta a ponta
+  (120 links: 41 CANCELADO + 79 FALTOU; AGENDADO ausente nos exemplos, ramo
+  coberto por teste sintético dedicado); só os 3 status linkam; data-has-note
+  e before/afterprint OK; suítes antigas verdes.
+- Versão 1.0.5.0→1.0.6.0 (+PrivacyNotice); wwwroot espelhado; repack+resign
+  (~63 MB, 2 cópias); smoke test exe 20 s OK; push normal main+master.
+
 ## Sessão 2026-10-08 (larguras + filtros + restyle caderno, v1.0.5.0)
 
 ### Pedido do dono (com 2 prints)
