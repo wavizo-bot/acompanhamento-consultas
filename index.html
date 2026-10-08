@@ -173,7 +173,7 @@
         <h2>Cole a agenda copiada</h2>
         <p class="sidebar-copy">Copie a tela do relatório da prefeitura — de um mês só ou de um período maior, como o ano inteiro — cole aqui e incorpore os agendamentos ao histórico. O profissional é detectado do cabeçalho; preencha abaixo só se quiser corrigir.</p>
         <label class="field-label" for="profNameInput">Profissional (vazio = detectar)</label>
-        <input class="field-input" id="profNameInput" type="text" autocomplete="off" placeholder="Ex.: LUANA PRISCILA KARCK" />
+        <input class="field-input" id="profNameInput" type="text" autocomplete="off" placeholder="Ex.: Sigmund Freud" />
         <label class="field-label" for="profSpecInput">Especialidade (vazio = detectar)</label>
         <input class="field-input" id="profSpecInput" type="text" autocomplete="off" placeholder="Ex.: PSICÓLOGO" />
         <textarea id="importText" spellcheck="false" aria-label="Cole aqui a cópia da tela de agendamento" placeholder="Cole aqui o conteúdo completo copiado da agenda..."></textarea>
@@ -217,9 +217,12 @@
 
       <section class="filters" aria-label="Filtros da lista de acompanhamento">
         <div class="filter-field">
-          <label for="profFilter">Profissional</label>
-          <select id="profFilter">
-            <option value="TODOS">Todos os profissionais</option>
+          <label>Profissionais a mostrar</label>
+          <div class="month-selector" id="profSelector"><span class="empty-months">Importe ao menos uma agenda para habilitar este filtro.</span></div>
+          <label for="viewMode" style="margin-top:8px;">Visão da lista</label>
+          <select id="viewMode">
+            <option value="separado">Uma linha por pessoa e profissional</option>
+            <option value="junto">Uma linha por pessoa (todos os profissionais)</option>
           </select>
         </div>
         <div class="filter-field">
@@ -446,11 +449,24 @@
         });
       }
 
+      function getSelectedProfs() {
+        const boxes = [...document.querySelectorAll('.prof-check')];
+        // Antes da primeira renderização não há checkboxes: considera tudo.
+        if (!boxes.length) return getProfessionals().map((p) => profDisplay(p));
+        return boxes.filter((input) => input.checked).map((input) => input.value);
+      }
+
       function getScopedProfessionals() {
-        const wanted = $('profFilter') ? $('profFilter').value : 'TODOS';
-        const all = getProfessionals();
-        if (!wanted || wanted === 'TODOS') return all;
-        return all.filter((p) => profDisplay(p) === wanted);
+        const selected = getSelectedProfs();
+        return getProfessionals().filter((p) => selected.includes(profDisplay(p)));
+      }
+
+      function profScopeText() {
+        const total = getProfessionals().length;
+        const selected = getScopedProfessionals();
+        if (!total || selected.length === total) return 'todos os profissionais';
+        if (selected.length === 1) return `profissional ${profDisplay(selected[0])}`;
+        return `${selected.length} profissionais`;
       }
 
       function getScopedReports() {
@@ -477,10 +493,15 @@
           return `<span class="prof-chip">${esc(profDisplay(prof))}${spec}<span class="chip-count">${count}</span><button class="chip-remove" data-remove-prof="${esc(profDisplay(prof))}" type="button" title="Excluir este profissional e seus dados">excluir</button></span>`;
         }).join('') : '<span class="empty-months">Nenhum profissional cadastrado.</span>';
 
-        const filter = $('profFilter');
-        const previousProf = filter.value || 'TODOS';
-        filter.innerHTML = '<option value="TODOS">Todos os profissionais</option>' + professionals.map((prof) => `<option value="${esc(profDisplay(prof))}">${esc(profDisplay(prof))}</option>`).join('');
-        filter.value = professionals.some((p) => profDisplay(p) === previousProf) ? previousProf : 'TODOS';
+        const previousProfChecks = [...document.querySelectorAll('.prof-check')];
+        const previousProfs = new Set(previousProfChecks.filter((i) => i.checked).map((i) => i.value));
+        const previousAllProfs = new Set(previousProfChecks.map((i) => i.value));
+        $('profSelector').innerHTML = professionals.length ? professionals.map((prof) => {
+          const name = profDisplay(prof);
+          const isNew = !previousAllProfs.has(name);
+          const checked = !previousProfChecks.length || previousProfs.size === 0 || previousProfs.has(name) || isNew ? ' checked' : '';
+          return `<label class="month-option"><input type="checkbox" class="prof-check" value="${esc(name)}"${checked}> ${esc(name)}</label>`;
+        }).join('') : '<span class="empty-months">Importe ao menos uma agenda para habilitar este filtro.</span>';
 
         const monthTotals = new Map();
         scopedReports.forEach((r) => monthTotals.set(r.monthKey, (monthTotals.get(r.monthKey) || 0) + ((r.entries || []).length)));
@@ -505,11 +526,16 @@
         const statusFilter = $('statusFilter').value;
         const lastStatusFilter = $('lastStatusFilter').value;
         const displayed = getScopedEntries().filter((entry) => selectedMonths.includes(entry.monthKey));
+        const joinProfs = $('viewMode') && $('viewMode').value === 'junto';
         const groups = new Map();
         displayed.forEach((entry) => {
-          const key = `${entry.professional || ''}|${identityFor(entry)}`;
-          if (!groups.has(key)) groups.set(key, { patient:entry.patient, citizenNumber:entry.citizenNumber, cpf:entry.cpf, cns:entry.cns, phones:entry.phones, professional:entry.professional || '', specialty:entry.specialty || '', events:[] });
+          const key = joinProfs ? identityFor(entry) : `${entry.professional || ''}|${identityFor(entry)}`;
+          if (!groups.has(key)) groups.set(key, { patient:entry.patient, citizenNumber:entry.citizenNumber, cpf:entry.cpf, cns:entry.cns, phones:entry.phones, professional:entry.professional || '', specialty:entry.specialty || '', professionals:[], events:[] });
           const person = groups.get(key);
+          const profName = entry.professional || UNIDENTIFIED;
+          if (!person.professionals.some((p) => p.name === profName)) {
+            person.professionals.push({ name: profName, specialty: entry.specialty || '' });
+          }
           person.events.push(entry);
           if (!person.citizenNumber && entry.citizenNumber) person.citizenNumber = entry.citizenNumber;
           if (!person.phones && entry.phones) person.phones = entry.phones;
@@ -561,9 +587,9 @@
         if (lastStatusFilter !== 'TODAS') filterParts.push(`última situação ${lastStatusFilter}`);
         const filterText = filterParts.length ? `, ${filterParts.join(' e ')}` : ', considerando todas as situações';
         const orderText = `, em ${ORDER_LABELS[currentOrder] || ORDER_LABELS.alpha}`;
-        const profScope = $('profFilter').value;
-        const profText = (!profScope || profScope === 'TODOS') ? 'todos os profissionais' : `profissional ${profScope}`;
-        $('listSummary').textContent = `${generatedRows.length} ${generatedRows.length === 1 ? 'pessoa encontrada' : 'pessoas encontradas'} em ${selectedMonths.length || 0} ${selectedMonths.length === 1 ? 'mês selecionado' : 'meses selecionados'} (${profText})${filterText}${orderText}.`;
+        const profText = profScopeText();
+        const viewText = $('viewMode') && $('viewMode').value === 'junto' ? ', visão por pessoa' : '';
+        $('listSummary').textContent = `${generatedRows.length} ${generatedRows.length === 1 ? 'pessoa encontrada' : 'pessoas encontradas'} em ${selectedMonths.length || 0} ${selectedMonths.length === 1 ? 'mês selecionado' : 'meses selecionados'} (${profText})${filterText}${orderText}${viewText}.`;
         if (!generatedRows.length) {
           list.innerHTML = '<div class="empty-list"><div class="empty-ficha"><strong>Nenhuma pessoa encontrada com estes filtros.</strong>Selecione outros meses ou escolha uma situação diferente para abrir os registros correspondentes.</div></div>';
           return;
@@ -573,8 +599,8 @@
           const id = person.citizenNumber || 'Não informado';
           const phones = phoneNumbers(person.phones);
           const phoneCell = phones.length ? phones.map((phone) => `<a class="phone-line" href="https://wa.me/55${esc(phone)}" target="_blank" rel="noopener noreferrer">${esc(phone)}</a>`).join('') : '<span class="person-detail">Não identificado</span>';
-          const profCell = person.professional
-            ? `<span class="person-name">${esc(person.professional)}</span>${person.specialty ? `<span class="person-detail">${esc(person.specialty)}</span>` : ''}`
+          const profCell = person.professionals.length
+            ? person.professionals.map((p) => `<span class="person-name">${esc(p.name)}</span>${p.specialty ? `<span class="person-detail">${esc(p.specialty)}</span>` : ''}`).join('')
             : '<span class="person-detail">Não identificado</span>';
           return `<tr><td><span class="person-name">${esc(person.patient)}</span><span class="person-detail">CPF: ${esc(person.cpf || 'não identificado')}</span></td><td class="cell-id">${esc(id)}</td><td class="phone-cell">${phoneCell}</td><td>${profCell}</td><td><div class="events">${events}</div></td></tr>`;
         }).join('');
@@ -590,35 +616,63 @@
         return counts;
       }
 
-      function reportTableHTML(rowLabel, rows) {
-        const head = `<tr><th>${esc(rowLabel)}</th>${STATUS.map((s) => `<th>${esc(s)}</th>`).join('')}<th>Total</th></tr>`;
+      // Pessoas com ADMITIDO ao menos uma vez cujo ÚLTIMO evento (no recorte)
+      // é CANCELADO ou FALTOU = atendimento não finalizado.
+      function countUnfinished(entries) {
+        const groups = new Map();
+        entries.forEach((entry) => {
+          const key = identityFor(entry);
+          if (!groups.has(key)) groups.set(key, []);
+          groups.get(key).push(entry);
+        });
+        let total = 0;
+        groups.forEach((events) => {
+          const ordered = [...events].sort((a, b) => String(a.date).localeCompare(String(b.date)));
+          const last = ordered[ordered.length - 1];
+          const hadAdmit = ordered.some((e) => e.status === 'ADMITIDO');
+          if (hadAdmit && last && (last.status === 'CANCELADO' || last.status === 'FALTOU')) total += 1;
+        });
+        return total;
+      }
+
+      function reportTableHTML(rowLabel, rows, statuses, extraLabel) {
+        const head = `<tr><th>${esc(rowLabel)}</th>${statuses.map((s) => `<th>${esc(s)}</th>`).join('')}${extraLabel ? `<th>${esc(extraLabel)}</th>` : ''}<th>Total</th></tr>`;
         const totals = countByStatus(rows.flatMap((r) => r.entries));
         const body = rows.map((row) => {
           const counts = countByStatus(row.entries);
           const total = row.entries.length;
-          return `<tr><td><span class="person-name">${esc(row.label)}</span>${row.sub ? `<span class="person-detail">${esc(row.sub)}</span>` : ''}</td>${STATUS.map((s) => `<td class="cell-id">${counts[s] || ''}</td>`).join('')}<td class="cell-id"><strong>${total}</strong></td></tr>`;
+          return `<tr><td><span class="person-name">${esc(row.label)}</span>${row.sub ? `<span class="person-detail">${esc(row.sub)}</span>` : ''}</td>${statuses.map((s) => `<td class="cell-id">${counts[s] || ''}</td>`).join('')}${extraLabel ? `<td class="cell-id">${row.extra || ''}</td>` : ''}<td class="cell-id"><strong>${total}</strong></td></tr>`;
         }).join('');
         const grand = rows.reduce((s, r) => s + r.entries.length, 0);
-        const totalRow = `<tr class="report-total"><td>Total</td>${STATUS.map((s) => `<td class="cell-id">${totals[s] || ''}</td>`).join('')}<td class="cell-id">${grand}</td></tr>`;
+        const grandExtra = rows.reduce((s, r) => s + (r.extra || 0), 0);
+        const totalRow = `<tr class="report-total"><td>Total</td>${statuses.map((s) => `<td class="cell-id">${totals[s] || ''}</td>`).join('')}${extraLabel ? `<td class="cell-id">${grandExtra || ''}</td>` : ''}<td class="cell-id">${grand}</td></tr>`;
         return `<table><thead>${head}</thead><tbody>${body}${totalRow}</tbody></table>`;
       }
 
-      function reportTableTSV(title, rowLabel, rows) {
-        const lines = [[title], [rowLabel, ...STATUS, 'Total']];
+      function reportTableTSV(title, rowLabel, rows, statuses, extraLabel) {
+        const header = [rowLabel, ...statuses];
+        if (extraLabel) header.push(extraLabel);
+        header.push('Total');
+        const lines = [[title], header];
         rows.forEach((row) => {
           const counts = countByStatus(row.entries);
-          lines.push([row.sub ? `${row.label} (${row.sub})` : row.label, ...STATUS.map((s) => counts[s] || 0), row.entries.length]);
+          const line = [row.sub ? `${row.label} (${row.sub})` : row.label, ...statuses.map((s) => counts[s] || 0)];
+          if (extraLabel) line.push(row.extra || 0);
+          line.push(row.entries.length);
+          lines.push(line);
         });
         const totals = countByStatus(rows.flatMap((r) => r.entries));
-        lines.push(['Total', ...STATUS.map((s) => totals[s] || 0), rows.reduce((s, r) => s + r.entries.length, 0)]);
+        const totalLine = ['Total', ...statuses.map((s) => totals[s] || 0)];
+        if (extraLabel) totalLine.push(rows.reduce((s, r) => s + (r.extra || 0), 0));
+        totalLine.push(rows.reduce((s, r) => s + r.entries.length, 0));
+        lines.push(totalLine);
         return lines.map((row) => row.map((value) => String(value).replace(/[\t\n]/g, ' ')).join('\t')).join('\n');
       }
 
       function renderReports() {
         const selectedMonths = getSelectedMonths();
         const entries = getScopedEntries().filter((entry) => selectedMonths.includes(entry.monthKey));
-        const profScope = $('profFilter').value;
-        const profText = (!profScope || profScope === 'TODOS') ? 'todos os profissionais' : `profissional ${profScope}`;
+        const profText = profScopeText();
         $('reportScope').textContent = entries.length
           ? `${entries.length} ${entries.length === 1 ? 'agendamento contado' : 'agendamentos contados'} (${profText}, ${selectedMonths.length || 0} ${selectedMonths.length === 1 ? 'mês' : 'meses'}).`
           : 'Sem agendamentos no recorte atual.';
@@ -640,9 +694,14 @@
         });
         const byMonth = [...byMonthMap.values()].sort((a, b) => a.label.localeCompare(b.label, 'pt-BR'));
 
-        $('reportByProf').innerHTML = byProf.length ? reportTableHTML('Profissional', byProf) : '<div class="empty-list"><div class="empty-ficha"><strong>Sem dados para este recorte.</strong></div></div>';
-        $('reportByMonth').innerHTML = byMonth.length ? reportTableHTML('Mês', byMonth) : '<div class="empty-list"><div class="empty-ficha"><strong>Sem dados para este recorte.</strong></div></div>';
-        generatedReportText = `${reportTableTSV('Por profissional x situação', 'Profissional', byProf)}\n\n${reportTableTSV('Por mês x situação', 'Mês', byMonth)}`;
+        // Colunas de situação totalmente zeradas no recorte são ocultadas.
+        const grandCounts = countByStatus(entries);
+        const visibleStatuses = STATUS.filter((s) => (grandCounts[s] || 0) > 0);
+        byProf.forEach((row) => { row.extra = countUnfinished(row.entries); });
+
+        $('reportByProf').innerHTML = byProf.length ? reportTableHTML('Profissional', byProf, visibleStatuses, 'NÃO FINALIZADO') : '<div class="empty-list"><div class="empty-ficha"><strong>Sem dados para este recorte.</strong></div></div>';
+        $('reportByMonth').innerHTML = byMonth.length ? reportTableHTML('Mês', byMonth, visibleStatuses, '') : '<div class="empty-list"><div class="empty-ficha"><strong>Sem dados para este recorte.</strong></div></div>';
+        generatedReportText = `${reportTableTSV('Por profissional x situação', 'Profissional', byProf, visibleStatuses, 'NÃO FINALIZADO')}\n\n${reportTableTSV('Por mês x situação', 'Mês', byMonth, visibleStatuses, '')}`;
       }
 
       async function copyReport() {
@@ -664,8 +723,8 @@
           person.citizenNumber || '',
           person.cpf || '',
           phoneNumbers(person.phones).join(' | '),
-          person.professional || '',
-          person.specialty || '',
+          person.professionals.map((p) => p.name).join(' | '),
+          [...new Set(person.professionals.map((p) => p.specialty).filter(Boolean))].join(' | '),
           person.events.map((event) => `${event.dateDisplay} — ${event.status}`).join(' | ')
         ]));
         return lines.map((row) => row.map((value) => String(value).replace(/[\t\n]/g, ' ')).join('\t')).join('\n');
@@ -713,7 +772,7 @@
           });
           persist(); $('importText').value = ''; $('profNameInput').value = ''; $('profSpecInput').value = '';
           updateMonthViews();
-          $('profFilter').value = profDisplay(prof);
+          [...document.querySelectorAll('.prof-check')].forEach((input) => { if (input.value === profDisplay(prof)) input.checked = true; });
           renderList(); renderReports();
           const totalEntries = months.reduce((sum, month) => sum + month.entries.length, 0);
           const monthNames = months.map((month) => labelMonth(month.monthKey)).join(', ');
@@ -734,7 +793,8 @@
         }
       });
       $('generateButton').addEventListener('click', () => { renderList(); renderReports(); });
-      $('profFilter').addEventListener('change', () => { updateMonthViews(); renderList(); renderReports(); });
+      $('profSelector').addEventListener('change', () => { updateMonthViews(); renderList(); renderReports(); });
+      $('viewMode').addEventListener('change', renderList);
       $('statusFilter').addEventListener('change', renderList);
       $('lastStatusFilter').addEventListener('change', renderList);
       $('monthSelector').addEventListener('change', () => { renderList(); renderReports(); });
@@ -748,7 +808,7 @@
         if (!prof) return;
         if (!window.confirm(`Excluir ${name} e todos os seus meses importados? Esta ação não pode ser desfeita.`)) return;
         appState.professionals = appState.professionals.filter((p) => p !== prof);
-        persist(); $('profFilter').value = 'TODOS'; updateMonthViews(); renderList(); renderReports();
+        persist(); updateMonthViews(); renderList(); renderReports();
         showToast(`${name} foi excluído.`);
       });
       $('printButton').addEventListener('click', () => { if (!generatedRows.length) { showToast('Gere uma lista com resultados antes de imprimir.', true); return; } window.print(); });

@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light" />
+    <title>Política de Privacidade - SlSS Acompanhamento de consultas</title>
+    <meta name="theme-color" content="#164b47" />
+    <style>
+        :root {
+            --ink: #182b2b;
+            --muted: #637170;
+            --paper: #f7f4ec;
+            --card: #fffdf8;
+            --teal: #16635b;
+            --teal-soft: #e0f0eb;
+            --amber: #c48722;
+        }
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            min-width: 320px;
+            color: var(--ink);
+            background: var(--paper);
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 15px;
+            line-height: 1.45;
+        }
+        .container {
+            max-width: 760px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+        .header h1 {
+            font-family: Georgia, 'Times New Roman', serif;
+            font-size: 36px;
+            font-weight: 500;
+            margin: 0 0 8px;
+            color: var(--ink);
+        }
+        .header .subtitle {
+            color: var(--muted);
+            font-size: 14px;
+        }
+        .content {
+            background: var(--card);
+            border: 1px solid var(--amber);
+            border-radius: 14px;
+            box-shadow: 0 10px 28px rgba(30, 57, 52, 0.08);
+            padding: 32px;
+            margin-bottom: 24px;
+        }
+        .content h2 {
+            font-family: Georgia, 'Times New Roman', serif;
+            font-size: 22px;
+            font-weight: 500;
+            margin: 0 0 16px;
+            color: var(--teal);
+        }
+        .content p {
+            margin: 0 0 12px;
+            color: var(--ink);
+        }
+        .content ul {
+            margin: 12px 0 12px 24px;
+            color: var(--ink);
+        }
+        .content .highlight {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            background: var(--teal-soft);
+            color: var(--teal);
+            font-weight: 700;
+            font-size: 13px;
+        }
+        .note {
+            background: var(--teal-soft);
+            border-radius: 12px;
+            padding: 16px 20px;
+            margin-top: 20px;
+            font-size: 13px;
+            color: var(--ink);
+            border: 1px solid #b1d1ca;
+        }
+        .footer {
+            text-align: center;
+            color: var(--muted);
+            font-size: 12px;
+            margin-top: 24px;
+        }
+        .contact {
+            display: inline-block;
+            margin-top: 8px;
+            color: var(--teal);
+            text-decoration: none;
+            font-weight: 700;
+        }
+        .contact:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Política de Privacidade</h1>
+            <p class="subtitle">SlSS Acompanhamento de consultas — Política de Tratamento de Dados</p>
+        </div>
+
+        <div class="content">
+            <h2>Visão geral</h2>
+            <p>O aplicativo <strong>SlSS Acompanhamento de consultas</strong> é um programa local‑first: todos os seus dados ficam <span class="highlight">apenas neste dispositivo</span>, armazenados no navegador embutido (localStorage / IndexedDB). <strong>Nada é enviado para a internet por esta página.</strong></p>
+            <p>Dados de saúde, nomes de pacientes, CNS, CPF, telefones e o histórico de agendamentos são importados por você a partir de relatórios copiados e colados — e permanecem exclusivamente no armazenamento local do seu computador.</p>
+
+            <h2>O que coletamos</h2>
+            <p>Nós <strong>não coletamos, enviamos, armazenamos em nuvem ou compartilhamos</strong> nenhum dado pessoal ou informação de saúde. O aplicativo:</p>
+            <ul>
+                <li>Não possui servidor ou backend;</li>
+                <li>Não envia cookies ou telemetria;</li>
+                <li>Não faz rastreamento de uso;</li>
+                <li>Não conecta a nenhum serviço externo;</li>
+                <li>Não coleta endereços IP, localização ou identificadores de dispositivo;</li>
+                <li>Não usa analytics, publicidade ou terceiros.</li>
+            </ul>
+
+            <h2>Como os dados são armazenados</h2>
+            <p>Todos os registros são salvos no <strong>localStorage do WebView2</strong> (motor Edge Chromium embutido). Os dados permanecem no disco rígido local e são apagados quando você limpa os dados do aplicativo ou o desinstala.</p>
+
+            <h2>Seus direitos</h2>
+            <p>Você pode, a qualquer momento:</p>
+            <ul>
+                <li><strong>Limpar todos os dados</strong> usando o botão "Limpar todos os dados" na barra lateral;</li>
+                <li><strong>Limpar o campo de colagem</strong>;</li>
+                <li><strong>Desinstalar o aplicativo</strong> — ao desinstalar, todos os dados locais são removidos automaticamente.</li>
+            </ul>
+
+            <h2>Contato</h2>
+            <p>Este aplicativo é uma gentileza do agente comunitário de saúde Maico.</p>
+            <a href="tel:11978831938" class="contact">Contato: 11 97883-1938</a>
+
+            <div class="note">
+                Por ser um software de uso local sem conexão à internet, nenhum mecanismo de autenticação, login ou conta de usuário é necessário ou oferecido. Os dados são manipulados exclusivamente pela interface deste aplicativo.
+            </div>
+        </div>
+
+        <div class="footer">
+            &copy; 2026 wavizo — SlSS Acompanhamento de consultas
+        </div>
+    </div>
+</body>
+</html>

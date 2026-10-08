@@ -56,6 +56,61 @@ Data: 2026-10-06
 
 ---
 
+## Sessão 2026-10-08 (relatórios v2 + seleção inclusiva, v1.0.3.0)
+
+### Regras ativas (C:\APPS\Regras.txt)
+- manual.txt e log.txt atualizados; log fracionado por etapa; criar
+  politica-de-privacidade.html e termos-de-servico.html se necessário.
+
+### Etapa 0 — arquivos legais (CONCLUÍDA)
+- Criado `politica-de-privacidade.html` (mesmo conteúdo/estilo do
+  PrivacyStatement, título "Política de Privacidade", nome da Store).
+- Criado `termos-de-servico.html` (uso local, sigilo/LGPD, "como está",
+  sem garantias, contato) — cobre o campo EULA da Store se pedido.
+- Removido `privacy.html` (substituído pelo nome da Regra; era só local,
+  nunca publicado).
+- manual.txt atualizado nas 4 menções.
+- Presunção: EULA curta em vez de "não necessário" — a Store aceita melhor
+  com termos explícitos; hospedar os 2 HTMLs (ex. GitHub Pages).
+
+### Etapa 1 — placeholder + colunas zeradas + NÃO FINALIZADO (CONCLUÍDA)
+- Placeholder do profissional: "LUANA PRISCILA KARCK" → "Sigmund Freud"
+  (famoso, falecido em 1939, sem risco; pedido do dono por privacidade).
+- Relatórios ocultam colunas de situação com zero em TODO o recorte
+  (conjunto de colunas calculado por recorte, igual nas 2 tabelas e no TSV).
+- Tabela "Por profissional" ganhou coluna NÃO FINALIZADO = nº de pessoas com
+  ADMITIDO ao menos 1 vez e último evento CANCELADO ou FALTOU (por pessoa,
+  não por evento; último por data no recorte). Tabela mensal sem a coluna,
+  conforme pedido ("na total adicionar").
+
+### Etapa 2 — visão por pessoa (CONCLUÍDA)
+- Novo seletor "Visão da lista" nos filtros: "Uma linha por pessoa e
+  profissional" (padrão, como era) ou "Uma linha por pessoa (todos os
+  profissionais)" — junta os eventos da mesma pessoa atendida por vários
+  profissionais, listando cada profissional na coluna Profissional.
+- Resumo da lista, cópia TSV e impressão acompanham a visão escolhida.
+
+### Etapa 3 — seleção inclusiva de profissionais (CONCLUÍDA)
+- Seletor exclusivo (dropdown Todos/um) substituído por checkboxes múltiplos
+  estilo "Meses a mostrar": dá p/ marcar 1, vários ou todos; recarrega meses,
+  lista e relatórios no mesmo recorte; profissional recém-importado entra
+  marcado; resumos dizem "todos os profissionais", "profissional X" ou
+  "N profissionais".
+- Presunção: desmarcar tudo e atualizar volta a marcar tudo (igual aos meses)
+  em vez de travar num recorte vazio.
+
+### Etapa 4 — testes + rebuild v1.0.3.0 (CONCLUÍDA)
+- Harness Node estendido: colunas do relatório total conferem exatamente com
+  os status presentes no recorte; NÃO FINALIZADO validado por cálculo
+  independente (LUANA 9, ANDRESSA 9, EVELY 11); inclusivo 2-de-3 OK; visão
+  junto = 1 linha por identidade (14 pessoas em 2+ profissionais, linhas
+  combinadas conferidas); copiar/excluir OK; migração v1 OK.
+- Achado e corrigido de verdade: 1ª carga com dados salvos vinha vazia
+  (escopo de profissionais lia checkboxes ainda não renderizados) —
+  getSelectedProfs agora assume tudo antes da 1ª renderização.
+- Versão 1.0.2.0→1.0.3.0 (+PrivacyNotice); wwwroot espelhado; repack+resign
+  (~63 MB, 2 cópias); smoke test exe 20 s OK; push normal main+master.
+
 ## Sessão 2026-10-08 (multi-profissional + relatórios, v1.0.2.0)
 
 ### Pedido do dono

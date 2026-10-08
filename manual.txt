@@ -24,7 +24,7 @@ Properties/DisplayName (NOME RESERVADO na Store) ... SlSS Acompanhamento de cons
 Package Family Name (PFN) ..... wavizo.SlSSAcompanhamentodeconsultas_c5p81jb0en0bm
 Package SID ................... S-1-15-2-4129138387-2334821746-3998454584-887326526-397364692-819623371-1943786192
 Store ID ...................... 9NCM6HXTK486
-AppxManifest Version .......... 1.0.2.0, arch x64, TargetDeviceFamily
+AppxManifest Version .......... 1.0.3.0, arch x64, TargetDeviceFamily
                                 Windows.Desktop, Min 10.0.19041.0, MaxTested 10.0.22621.0
 Capabilities .................. internetClient (exigido pelo WebView2) +
                                 rescap:runFullTrust (host .NET)
@@ -38,9 +38,11 @@ RAIZ = fonte da verdade do PWA:
   sw.js ................. service worker, cache "acompanhamento-consultas-v1"
   icons/ ................ 7 PNGs (192, 512, maskable x2, apple-touch, favicon 32/64)
   vercel.json / netlify.toml  headers p/ deploy estático (sw.js sem cache)
-  privacy.html .......... CÓPIA de msix/package/PrivacyStatement.html, fica na
-                          raiz p/ poder hospedar (GitHub Pages) e informar a URL
+  politica-de-privacidade.html .. CÓPIA (mesmo estilo) do PrivacyStatement, fica
+                          na raiz p/ hospedar (GitHub Pages) e informar a URL
                           da política de privacidade no Partner Center
+  termos-de-servico.html  Termos de uso curtos (uso local, sigilo/LGPD, "como
+                          está"); hospedar junto se a Store pedir EULA
   README.md ............. docs do PWA (deploy Netlify/Vercel)
   build_msix.bat ........ script de build: espelha PWA → wwwroot, makeappx pack,
                           signtool sign, copia backup p/ msix/
@@ -55,7 +57,8 @@ MSIX:
                              WebView2 1.0.2903.40), Program.cs, Form1.cs, Form1.Designer.cs
   msix/package/AppxManifest.xml ... manifesto CANÔNICO (usar este; não o de unpacked)
   msix/package/PrivacyStatement.html + PrivacyNotice.txt ... PRIVACIDADE (obrig.
-      p/ certificação Store). Também espelhado em privacy.html na raiz.
+      p/ certificação Store). Também espelhado em politica-de-privacidade.html
+      na raiz.
   msix/package/StoreAssets/ ... 6 PNGs da Store (StoreLogo, Square150, Square44,
       SmallLogo, Wide310x150, SplashScreen)
   msix/package/wwwroot/ ... ESPELHO do PWA (index.html, manifest.json, sw.js,
@@ -83,13 +86,20 @@ de massa de teste p/ colar no app), msix/unpacked/ (extração antiga p/ debug).
   linhas só-numéricas e "PSICÓLOGO"; status normalizado p/ 9 valores
   (AGENDADO, ADMITIDO, CANCELADO, TRANSFERIDO, FALTOU, AGENDA RESERVA, RESERVA
   CANCELADA, RESERVADO, NÃO REALIZADO); agrupa por mês (monthKey AAAA-MM).
-- Estado: localStorage chave "acompanhamento-consultas-v1" =
-  {reports:[{monthKey, entries[], importedAt}]}. Reimportar mês existente =
-  SUBSTITUI (confirm). Sem migração de schema.
-- Lista: agrupa por pessoa (nº cadastro > CPF > CNS > nome), filtros "contém
-  situação" + "última situação" + meses marcados; 5 ordens (alfabética, recentes,
-  antigos, habitual, inabitual); telefones viram links wa.me/55<num>; copiar =
-  TSV p/ planilha; imprimir = CSS @media print (só a tabela).
+  Cabeçalho: detecta Profissional/Especialidade (inline ou linha seguinte) e
+  o TOTAL DE CONSULTA do rodapé (validação informado × identificado).
+- Estado: localStorage chave "acompanhamento-consultas-v2" =
+  {professionals:[{name, specialty, reports:[{monthKey, entries[],
+  importedAt, expectedTotal}]}]}. Reimportar mês do MESMO profissional =
+  SUBSTITUI (confirm). v1 migra p/ profissional "(Não identificado)".
+- Lista: agrupa por pessoa (nº cadastro > CPF > CNS > nome); filtros
+  profissionais (checkboxes inclusivos) + "contém/última situação" + meses;
+  visão separado (pessoa+profissional) ou junto (pessoa, todos os
+  profissionais); 5 ordens; telefones → wa.me; copiar TSV; imprimir.
+- Relatórios: matrizes profissional×situação (com coluna NÃO FINALIZADO =
+  pessoas com ADMITIDO e último evento CANCELADO/FALTOU) e mês×situação;
+  colunas zeradas no recorte são ocultas; respeitam profissional+meses;
+  copiar TSV + impressão.
 - PWA: install prompt (beforeinstallprompt → botão), SW cache-first do app shell,
   exige HTTPS/localhost (não file://).
 
@@ -110,8 +120,9 @@ d) Repo GitHub tinha DUAS branches divergentes: master (PWA+MSIX fonte, certa)
 e) Binários (.msix, .exe, .dll, .pfx) NÃO vão p/ o git — repo = só fontes. Quem
    precisar do .msix roda build_msix.bat.
 f) Política de privacidade existe em 3 lugares intencionais: PrivacyStatement.
-   html + PrivacyNotice.txt (dentro do pacote, p/ certificação) e privacy.html
-   (raiz, p/ hospedar e colar a URL no Partner Center).
+   html + PrivacyNotice.txt (dentro do pacote, p/ certificação),
+   politica-de-privacidade.html (raiz, p/ hospedar e colar a URL no Partner
+   Center) e termos-de-servico.html (raiz, EULA curta p/ a Store).
 g) TELA VERDE TRAVADA (splash nunca sai, 2026-10-07): o host era
    framework-dependent (AcompanhamentoConsultas.dll de 9 KB) e PCs sem o
    runtime .NET 8 não conseguiam iniciar o app. Correção: publish
@@ -138,8 +149,8 @@ FEITO: identidade, manifest, capabilities, assets, privacidade no pacote,
        .msix x64 buildado+assinado (teste), repo limpo.
 FALTA (lado do dono, no dashboard https://partner.microsoft.com):
   [ ] Upload do .msix (a Store reassina com cert oficial)
-  [ ] URL da política de privacidade → hospedar privacy.html (ex. GitHub Pages)
-      e colar o link
+  [ ] URL da política de privacidade → hospedar politica-de-privacidade.html
+      (ex. GitHub Pages) e colar o link (+ termos-de-servico.html se pedir EULA)
   [ ] 1–8 screenshots desktop (1366x768 ou 1920x1080)
   [ ] Descrição curta/longa PT-BR, categoria (Saúde/Produtividade/Médico),
       palavras-chave
