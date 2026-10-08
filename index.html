@@ -175,6 +175,7 @@
     .report-panel::before { content:"RELATÓRIOS · TOTAIS POR PROFISSIONAL E POR MÊS"; position:absolute; top:0; right:0; left:0; padding:9px 21px; color:#54706a; border-bottom:1px solid #e5e4dc; border-radius:4px 14px 0 0; background:#f1f2ea; font-size:10px; font-weight:800; letter-spacing:.11em; }
     .report-scope { margin:0 0 14px; color:var(--muted); font-size:13px; }
     .report-table-wrap { overflow:auto; margin-bottom:18px; border:1px solid #e3e5df; border-radius:10px; }
+    .print-only { display:none; }
     .report-table-wrap h4 { margin:0; padding:10px 14px; background:#f5f5ef; font-size:12px; letter-spacing:.06em; text-transform:uppercase; color:#56706c; }
     .report-table-wrap table { min-width:640px; }
     .report-table-wrap td:first-child, .report-table-wrap th:first-child { position:sticky; left:0; background:#fffdf8; }
@@ -182,7 +183,7 @@
     @media (max-width:960px) { .app-shell { grid-template-columns:1fr; } .sidebar { position:relative; height:auto; min-height:0; padding:23px 20px; } .main { padding:28px 20px 40px; } .filter-field, .filter-field.wide { flex:1 1 100%; } .filter-actions { justify-content:flex-end; margin-left:0; } }
     @media (max-width:620px) { .main-header, .list-toolbar, .section-heading { align-items:flex-start; flex-direction:column; } .storage-card { width:100%; } .toolbar-actions { width:100%; } .toolbar-actions .button { flex:1; } .main-title h2 { font-size:32px; } .filters { padding:16px; } }
     @media (prefers-reduced-motion:no-preference) { .month-chip { animation:chip-enter 180ms cubic-bezier(.23,1,.32,1) both; } @keyframes chip-enter { from { opacity:0; transform:translateY(5px); } to { opacity:1; transform:translateY(0); } } }
-    @media print { @page { margin:12mm; } body { background:#fff; font-size:10pt; } .sidebar, .month-panel, .filters, .storage-card, .toolbar-actions, .order-bar, .toast, #sidebarShowButton, .report-panel { display:none !important; } body.print-reports-only .report-panel { display:block !important; } body.print-reports-only .list-panel { display:none !important; } body.print-notes-only tr[data-has-note="0"] { display:none; } .app-shell { display:block; } .main { padding:0; } .main-header { margin:0 0 8px; } .main-title .eyebrow { margin-bottom:2px; font-size:8pt; } .main-title h2 { font-size:18pt; } .main-title p { display:none; } .list-panel { border:0; border-radius:0; box-shadow:none; } .list-toolbar { padding:0 0 6px; border-bottom:1px solid #777; } .list-toolbar p { display:none; } .list-summary { padding:4px 0; background:#fff; } .table-wrap { overflow:visible; } table { min-width:0; table-layout:fixed; } th { padding:6px 5px; background:#f3f3f3; font-size:8pt; } td { padding:6px 5px; } th:nth-child(1), td:nth-child(1) { width:22%; } th:nth-child(2), td:nth-child(2) { width:11%; } th:nth-child(3), td:nth-child(3) { width:12%; } th:nth-child(4), td:nth-child(4) { width:15%; } th:nth-child(5), td:nth-child(5) { width:40%; } table.cols-4 th:nth-child(1), table.cols-4 td:nth-child(1) { width:25%; } table.cols-4 th:nth-child(2), table.cols-4 td:nth-child(2) { width:12%; } table.cols-4 th:nth-child(3), table.cols-4 td:nth-child(3) { width:13%; } table.cols-4 th:nth-child(4), table.cols-4 td:nth-child(4) { width:50%; } .phone-line { color:inherit; } .events { min-width:0; } .event { padding:2px 3px; border:0; font-size:8pt; } .badge { font-size:7pt; } .note-input { border:1px solid #999; font-size:9pt; } }
+    @media print { @page { margin:12mm; } body { background:#fff; font-size:10pt; } .sidebar, .month-panel, .filters, .storage-card, .toolbar-actions, .order-bar, .toast, #sidebarShowButton, .report-panel { display:none !important; } body.print-reports-only .report-panel { display:block !important; } body.print-reports-only .list-panel { display:none !important; } body.print-notes-only tr[data-has-note="0"] { display:none; } .app-shell { display:block; } .main { padding:0; } .main-header { margin:0 0 8px; } .main-title .eyebrow { margin-bottom:2px; font-size:8pt; } .main-title h2 { font-size:18pt; } .main-title p { display:none; } .list-panel { border:0; border-radius:0; box-shadow:none; } .list-toolbar { padding:0 0 6px; border-bottom:1px solid #777; } .list-toolbar p { display:none; } .list-summary { padding:4px 0; background:#fff; } .table-wrap { overflow:visible; } table { min-width:0; table-layout:fixed; } th { padding:6px 5px; background:#f3f3f3; font-size:8pt; } td { padding:6px 5px; } th:nth-child(1), td:nth-child(1) { width:22%; } th:nth-child(2), td:nth-child(2) { width:11%; } th:nth-child(3), td:nth-child(3) { width:12%; } th:nth-child(4), td:nth-child(4) { width:15%; } th:nth-child(5), td:nth-child(5) { width:40%; } table.cols-4 th:nth-child(1), table.cols-4 td:nth-child(1) { width:25%; } table.cols-4 th:nth-child(2), table.cols-4 td:nth-child(2) { width:12%; } table.cols-4 th:nth-child(3), table.cols-4 td:nth-child(3) { width:13%; } table.cols-4 th:nth-child(4), table.cols-4 td:nth-child(4) { width:50%; } .phone-line { color:inherit; } .events { min-width:0; } .event { padding:2px 3px; border:0; font-size:8pt; } .badge { font-size:7pt; } .note-input { border:1px solid #999; font-size:9pt; } .print-only { display:inline !important; } .screen-only { display:none !important; } .report-panel { border:0; border-radius:0; box-shadow:none; } .report-table-wrap { overflow:visible; border:0; border-radius:0; margin-bottom:12px; } .report-table-wrap h4 { background:#f3f3f3; font-size:8pt; padding:6px 8px; } .report-table-wrap table { min-width:0; width:100%; } .report-table-wrap th:nth-child(n), .report-table-wrap td:nth-child(n) { width:auto; padding:4px 3px; font-size:7.5pt; } .report-table-wrap th:first-child, .report-table-wrap td:first-child { width:24%; } .report-table-wrap th { white-space:normal; } }
   </style>
 </head>
 <body>
@@ -724,13 +725,27 @@
         return total;
       }
 
-      function reportTableHTML(rowLabel, rows, statuses, extraLabel) {
-        const head = `<tr><th>${esc(rowLabel)}</th>${statuses.map((s) => `<th>${esc(s)}</th>`).join('')}${extraLabel ? `<th>${esc(extraLabel)}</th>` : ''}<th>Total</th></tr>`;
+      // Na impressão: cabeçalhos curtos (4 letras por palavra) e mês sem o ano
+      // quando todos são do mesmo ano — tudo precisa caber na página.
+      function shortLabel(text) {
+        return String(text).split(' ').filter(Boolean).map((w) => w.slice(0, 4)).join(' ') + '.';
+      }
+
+      function shortMonth(label, monthKey, hideYear) {
+        if (!hideYear || !monthKey) return label;
+        return String(label).replace(/\s+de\s+\d{4}\s*$/, '');
+      }
+
+      function reportTableHTML(rowLabel, rows, statuses, extraLabel, hideYear) {
+        const head = `<tr><th>${esc(rowLabel)}</th>${statuses.map((s) => `<th><span class="screen-only">${esc(s)}</span><span class="print-only">${esc(shortLabel(s))}</span></th>`).join('')}${extraLabel ? `<th><span class="screen-only">${esc(extraLabel)}</span><span class="print-only">${esc(shortLabel(extraLabel))}</span></th>` : ''}<th>Total</th></tr>`;
         const totals = countByStatus(rows.flatMap((r) => r.entries));
         const body = rows.map((row) => {
           const counts = countByStatus(row.entries);
           const total = row.entries.length;
-          return `<tr><td><span class="person-name">${esc(row.label)}</span>${row.sub ? `<span class="person-detail">${esc(row.sub)}</span>` : ''}</td>${statuses.map((s) => `<td class="cell-id">${counts[s] || ''}</td>`).join('')}${extraLabel ? `<td class="cell-id">${row.extra || ''}</td>` : ''}<td class="cell-id"><strong>${total}</strong></td></tr>`;
+          const labelCell = row.key
+            ? `<span class="screen-only">${esc(row.label)}</span><span class="print-only">${esc(shortMonth(row.label, row.key, hideYear))}</span>`
+            : `<span class="person-name">${esc(row.label)}</span>`;
+          return `<tr><td>${labelCell}${row.sub ? `<span class="person-detail">${esc(row.sub)}</span>` : ''}</td>${statuses.map((s) => `<td class="cell-id">${counts[s] || ''}</td>`).join('')}${extraLabel ? `<td class="cell-id">${row.extra || ''}</td>` : ''}<td class="cell-id"><strong>${total}</strong></td></tr>`;
         }).join('');
         const grand = rows.reduce((s, r) => s + r.entries.length, 0);
         const grandExtra = rows.reduce((s, r) => s + (r.extra || 0), 0);
@@ -787,9 +802,11 @@
         const grandCounts = countByStatus(entries);
         const visibleStatuses = STATUS.filter((s) => (grandCounts[s] || 0) > 0);
         byProf.forEach((row) => { row.extra = countUnfinished(row.entries); });
+        const reportKeys = [...byMonthMap.keys()].map(String);
+        const hideYear = reportKeys.length > 0 && reportKeys.every((k) => k.slice(0, 4) === reportKeys[0].slice(0, 4));
 
-        $('reportByProf').innerHTML = byProf.length ? reportTableHTML('Profissional', byProf, visibleStatuses, 'NÃO FINALIZADO') : '<div class="empty-list"><div class="empty-ficha"><strong>Sem dados para este recorte.</strong></div></div>';
-        $('reportByMonth').innerHTML = byMonth.length ? reportTableHTML('Mês', byMonth, visibleStatuses, '') : '<div class="empty-list"><div class="empty-ficha"><strong>Sem dados para este recorte.</strong></div></div>';
+        $('reportByProf').innerHTML = byProf.length ? reportTableHTML('Profissional', byProf, visibleStatuses, 'NÃO FINALIZADO', hideYear) : '<div class="empty-list"><div class="empty-ficha"><strong>Sem dados para este recorte.</strong></div></div>';
+        $('reportByMonth').innerHTML = byMonth.length ? reportTableHTML('Mês', byMonth, visibleStatuses, '', hideYear) : '<div class="empty-list"><div class="empty-ficha"><strong>Sem dados para este recorte.</strong></div></div>';
         generatedReportText = `${reportTableTSV('Por profissional x situação', 'Profissional', byProf, visibleStatuses, 'NÃO FINALIZADO')}\n\n${reportTableTSV('Por mês x situação', 'Mês', byMonth, visibleStatuses, '')}`;
       }
 

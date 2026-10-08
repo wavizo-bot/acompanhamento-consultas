@@ -97,6 +97,37 @@ Data: 2026-10-06
 - Versão 1.0.5.0→1.0.6.0 (+PrivacyNotice); wwwroot espelhado; repack+resign
   (~63 MB, 2 cópias); smoke test exe 20 s OK; push normal main+master.
 
+## Sessão 2026-10-08 (relatório compacto p/ impressão, v1.0.8.0)
+
+### Pedido do dono (com print das tabelas)
+1. Relatório imprime com rolagem lateral (não existe em papel/PDF).
+2. Abreviar cabeçalhos: 4 letras (AGEND. ADMI. CANC. TRAN. FALT. Total).
+3. Meses do mesmo ano sem repetir o ano ("Janeiro", não "Janeiro de 2026").
+
+### Etapa 0 — rótulos curtos só na impressão (CONCLUÍDA)
+- `shortLabel`: 4 primeiras letras de CADA palavra + ponto ("AGENDA RESERVA"
+  → "AGEN RESE.", "RESERVA CANCELADA" → "RESE CANC.", "NÃO FINALIZADO" →
+  "NÃO FIN." — sem colisão); thead carrega versão tela + versão print
+  (spans screen-only/print-only); TSV e tela intactos.
+- Mês: print mostra só o nome quando todos os monthKeys têm o mesmo ano
+  (`hideYear`); senão, nome completo. Linha de profissional sem mudança.
+
+### Etapa 1 — larguras impressão sem rolagem (CONCLUÍDA)
+- Causa: tabela de relatórios com `min-width:640px` dentro de caixa com scroll
+  (no papel não há scroll: corta). Print agora: tabela 100% sem mínimo,
+  1ª coluna 24% e demais divididas, fonte 7.5pt, padding curto, cabeçalho
+  com quebra de linha, sem borda de caixa. `.print-only` some na tela e
+  aparece no papel (inverso do `.screen-only`).
+
+### Etapa 2 — testes + rebuild v1.0.8.0 (CONCLUÍDA)
+- Abreviações e meses curtos conferidos no HTML (tela mantém cheios);
+  anos mistos mantêm o ano + ordem cronológica (teste sintético);
+  3 suítes verdes.
+- Versão 1.0.7.0→1.0.8.0 (+PrivacyNotice); wwwroot espelhado; repack+resign
+  (~63 MB, 2 cópias); smoke test exe 20 s OK; push normal main+master.
+
+### Etapa 2 — testes + rebuild v1.0.8.0
+
 ## Sessão 2026-10-08 (emojis WhatsApp + meses cronológicos + impressão separada, v1.0.7.0)
 
 ### Pedido do dono (+ 3 URLs de exemplo)
