@@ -56,6 +56,45 @@ Data: 2026-10-06
 
 ---
 
+## Sessão 2026-10-08 (larguras + filtros + restyle caderno, v1.0.5.0)
+
+### Pedido do dono (com 2 prints)
+1. Coluna do nome larga demais; espaço melhor na DECISÃO.
+2. Reorganizar SELEÇÃO DE ARQUIVO: Profissionais (cresce) no centro;
+   Visão/Contém/Última (fixos) empilhados numa coluna à esquerda (conforme
+   montagem enviada).
+3. Tirar o "AI-generated look": parecer com o Caderno de Cuidado
+   (C:\APPS\Caderno de Cuidado).
+
+### Etapa 0 — estudo do Caderno (CONCLUÍDA)
+- Linguagem dele: papel creme (#fbfcf8/#f8faf5), verde-profundo #174a3a,
+  terracota (#c4775a/#bd7255), sálvia, cantos assimétricos (ex. 9px 3px),
+  tracejados, barras laterais coloridas, pauta de caderno
+  (repeating-linear-gradient), serifada display (DM Serif) nos números,
+  micro-rótulos em caixa alta com tracking, "fita" em quadrado rotacionado.
+- Presunção: não copiei; traduzi p/ a identidade deste app (verde #164b47 +
+  papel #f7f4ec que já tinha), sem mudar comportamento.
+
+### Etapa 1 — larguras e filtros (CONCLUÍDA)
+- Tabela da lista com `table-layout:fixed`: nome 17%, cadastro 9%, telefone
+  11%, profissional 15%, decisão/eventos 48% (cols-4: 20/10/13/57);
+  telefone min-width 145→110px.
+- Filtros: coluna fixa à esquerda com os 3 selects empilhados (Visão, Contém,
+  Última), Profissionais no centro (cresce), Meses à direita, Gerar no canto.
+
+### Etapa 2 — restyle "ficha de papel" (CONCLUÍDA, só CSS)
+- Lombadas terracota (#c4775a) nos painéis/cards, cantos assimétricos
+  (ex. 10px 3px), tracejados nos separadores e opções, tabela estilo livro
+  (cabeçalho com filete duplo, linhas tracejadas, hover quente), fundo com
+  pauta sutil, losango terracota nos títulos, campo de decisão com pauta de
+  caderno, filete âmbar nos h2 da sidebar. Nada de estrutura/JS mudado aqui.
+
+### Etapa 3 — testes + rebuild v1.0.5.0 (CONCLUÍDA)
+- IDs únicos conferidos (viewMode/profSelector/monthSelector/etc. ×1);
+  suítes Node verdes (funcional + migração); wwwroot espelhado;
+  versão 1.0.4.0→1.0.5.0 (+PrivacyNotice); repack+resign (~63 MB, 2 cópias);
+  smoke test exe 20 s OK; push normal main+master.
+
 ## Sessão 2026-10-08 (layout + sidebar + coluna única + anotações, v1.0.4.0)
 
 ### Regras ativas (C:\APPS\Regras.txt)
