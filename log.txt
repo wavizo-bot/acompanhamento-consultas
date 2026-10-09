@@ -97,6 +97,34 @@ Data: 2026-10-06
 - Versão 1.0.5.0→1.0.6.0 (+PrivacyNotice); wwwroot espelhado; repack+resign
   (~63 MB, 2 cópias); smoke test exe 20 s OK; push normal main+master.
 
+## Sessão 2026-10-09 (1.0.10.0 fecha sozinho — EntryPoint, v1.0.11.0)
+
+### Pedido do dono (+ prints)
+- Mesmo erro na 1.0.10.0 (agora sem som do sistema): splash verde esticado,
+  tenta abrir, fecha sozinho em <1 min. Win11 pessoal, admin único.
+
+### Investigação minha
+- Docs Microsoft (PSF + issue WindowsAppSDK#5600): app desktop empacotado usa
+  `EntryPoint="Windows.FullTrustApplication"`; EntryPoint estilo-UWP falha
+  SÓ no run (pacote cria normal). Nosso manifesto tinha
+  `EntryPoint="AcompanhamentoConsultas.Program"` (classe inexistente) +
+  extensão `desktop:FullTrustProcess` vazia, desde a 1ª versão — o app
+  PROVAVELMENTE NUNCA ativou pela Store. Splash = tentativa, não prova.
+- Por que passou batido: rodo o exe direto (pula a ativação); makeappx e a
+  certificação validam esquema, não semântica. Erro meu anterior ("não mexer").
+
+### Feito (sucesso)
+1. Manifesto canônico Desktop Bridge: Executable + Windows.FullTrustApplication,
+   SEM bloco Extensions (capabilities mantidas).
+2. Bump 1.0.10.0→1.0.11.0 em manifesto + APP_VERSION do JS (reabre o modal,
+   como especificado) + PrivacyNotice; wwwroot espelhado; pack (schema OK) +
+   resign (~63 MB, 2 cópias); unpack confirma EntryPoint/versão; smoke exe OK;
+   suítes Node verdes; push normal main+master.
+3. Diagnóstico p/ o dono: se 1.0.11.0 falhar, ver se existe
+   ...\Packages\<PFN>\LocalCache\Local\wavizo.SlSSAcompanhamentodeconsultas\
+   startup.log — AUSENTE = ativação nem lançou o exe; PRESENTE com parada =
+   mostra onde.
+
 ## Sessão 2026-10-09 (1.0.9.0 não abre na Store — diagnóstico, v1.0.10.0)
 
 ### Pedido do dono (+ prints)

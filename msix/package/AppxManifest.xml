@@ -7,7 +7,7 @@
 
   <Identity Name="wavizo.SlSSAcompanhamentodeconsultas"
             Publisher="CN=57BB464E-553F-45B6-A4ED-B253157408EB"
-             Version="1.0.10.0"
+             Version="1.0.11.0"
             ProcessorArchitecture="x64" />
 
   <Properties>
@@ -28,21 +28,16 @@
   <Applications>
     <Application Id="App"
                  Executable="AcompanhamentoConsultas.exe"
-                 EntryPoint="AcompanhamentoConsultas.Program">
+                 EntryPoint="Windows.FullTrustApplication">
       <uap:VisualElements DisplayName="SlSS Acompanhamento de consultas"
                           Square150x150Logo="StoreAssets\Square150x150Logo.png"
                           Square44x44Logo="StoreAssets\Square44x44Logo.png"
-                           Description="App para agentes de saúde acompanharem consultas: importa a agenda, filtra por situação, ordena e imprime."
+                          Description="App para agentes de saúde acompanharem consultas: importa a agenda, filtra por situação, ordena e imprime."
                           BackgroundColor="#164b47">
         <uap:DefaultTile Wide310x150Logo="StoreAssets\Wide310x150Logo.png" />
         <uap:SplashScreen BackgroundColor="#164b47"
                           Image="StoreAssets\SplashScreen.png" />
       </uap:VisualElements>
-      <Extensions>
-        <desktop:Extension Category="windows.fullTrustProcess">
-          <desktop:FullTrustProcess />
-        </desktop:Extension>
-      </Extensions>
     </Application>
   </Applications>
 
