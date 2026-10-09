@@ -125,6 +125,24 @@ Data: 2026-10-06
    startup.log — AUSENTE = ativação nem lançou o exe; PRESENTE com parada =
    mostra onde.
 
+## Sessão 2026-10-09 (forense na máquina: 1.0.10.0 roda sem janela)
+
+### Feito (investigação direta no PC, sem mudar código)
+1. Pastas do pacote: LocalCache VAZIA, mas o app escreve em
+   `Packages\<PFN>\AC\wavizo.SlSSAcompanhamentodeconsultas\` (é p/ lá que o
+   LocalAppData resolve p/ este app — correção ao palpite anterior).
+   Lá há `startup.log` (init 1.0.10.0 COMPLETO até navigate!) e perfil
+   WebView2 EBWebView com History de `.../wwwroot/index.html` de hoje.
+2. Lancei a Store 1.0.10.0 e observei 60 s: exe roda, WebView2 filho roda,
+   History atualiza — mas o pid NUNCA tem HWND (0 janelas do T+1 ao T+25);
+   a única janela visível é o splash (ApplicationFrameWindow de outro pid);
+   processo morre sozinho depois (~ Application Hang 1002 no Event Viewer).
+3. Prova por contraste: AvisadorCF2A (mesmo publisher, mesma máquina,
+   manifesto com `EntryPoint="Windows.FullTrustApplication"`) abre em 5 s
+   COM janela e fica estável. Máquina, Store e WebView2 OK — a diferença é
+   o manifesto. 1.0.11.0 (já entregue) é o fix; aguardar Store e retestar.
+- Presunção corrigida: splash = tentativa de ativação, não prova de nada.
+
 ## Sessão 2026-10-09 (1.0.9.0 não abre na Store — diagnóstico, v1.0.10.0)
 
 ### Pedido do dono (+ prints)
