@@ -24,7 +24,7 @@ Properties/DisplayName (NOME RESERVADO na Store) ... SlSS Acompanhamento de cons
 Package Family Name (PFN) ..... wavizo.SlSSAcompanhamentodeconsultas_c5p81jb0en0bm
 Package SID ................... S-1-15-2-4129138387-2334821746-3998454584-887326526-397364692-819623371-1943786192
 Store ID ...................... 9NCM6HXTK486
-AppxManifest Version .......... 1.0.8.0, arch x64, TargetDeviceFamily
+AppxManifest Version .......... 1.0.9.0, arch x64, TargetDeviceFamily
                                 Windows.Desktop, Min 10.0.19041.0, MaxTested 10.0.22621.0
 Capabilities .................. internetClient (exigido pelo WebView2) +
                                 rescap:runFullTrust (host .NET)
@@ -100,6 +100,10 @@ de massa de teste p/ colar no app), msix/unpacked/ (extração antiga p/ debug).
   pessoas com ADMITIDO e último evento CANCELADO/FALTOU) e mês×situação;
   colunas zeradas no recorte são ocultas; respeitam profissional+meses;
   copiar TSV + impressão.
+- Aceite de termos: modal bloqueante "Termos e Condições de Uso" na 1ª
+  execução e a cada versão (APP_VERSION no JS = manifesto; TERMS_VERSION
+  v1.0); aceite em `acompanhamento-terms-accept`; "Quero sair" tenta
+  window.close() e cai em tela preta; sem fechar por fora/ESC/X.
 - PWA: install prompt (beforeinstallprompt → botão), SW cache-first do app shell,
   exige HTTPS/localhost (não file://).
 

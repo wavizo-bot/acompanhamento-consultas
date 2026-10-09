@@ -161,6 +161,32 @@
     .toast { position:fixed; right:22px; bottom:22px; z-index:50; max-width:360px; padding:12px 15px; border-radius:10px 3px 10px 3px; color:#fff; background:#203e3a; box-shadow:0 12px 30px rgba(0,0,0,.2); font-size:13px; opacity:0; transform:translateY(12px); pointer-events:none; transition:opacity 180ms ease, transform 180ms cubic-bezier(.23,1,.32,1); }
     .toast.show { opacity:1; transform:translateY(0); }
     .toast.error { background:#913b35; }
+    [hidden] { display:none !important; }
+    body.terms-open { overflow:hidden; }
+    #termsOverlay { position:fixed; inset:0; z-index:100; display:flex; align-items:center; justify-content:center; padding:20px; background:rgba(10,25,23,.74); }
+    #termsOverlay[hidden] { display:none !important; }
+    .terms-modal { display:flex; flex-direction:column; width:100%; max-width:680px; max-height:92vh; border:1px solid var(--line); border-left:3px solid var(--rust); border-radius:4px 14px 4px 14px; background:var(--card); box-shadow:0 24px 60px rgba(0,0,0,.35); overflow:hidden; }
+    .terms-head { padding:18px 22px 12px; border-bottom:1px solid var(--line); background:#f5f5ef; }
+    .terms-head h2 { margin:0; font-family:Georgia, 'Times New Roman', serif; font-size:24px; font-weight:500; }
+    .terms-head p { margin:4px 0 0; color:var(--muted); font-size:12px; }
+    .terms-tabs { display:flex; gap:6px; padding:12px 22px 0; }
+    .terms-tab { flex:1; min-height:38px; padding:8px 6px; border:1px solid #bcc8c1; border-bottom:0; border-radius:9px 9px 0 0; color:#425553; background:#eef2ed; font-size:12px; font-weight:700; cursor:pointer; }
+    .terms-tab.active { color:#fff; background:var(--teal); border-color:var(--teal); }
+    .terms-body { padding:0 22px; }
+    .terms-panel { height:300px; overflow-y:auto; padding:16px 18px; border:1px solid #bcc8c1; border-radius:0 0 9px 9px; background:#fffdf8; }
+    .terms-panel h3 { margin:16px 0 6px; color:var(--teal); font-family:Georgia, 'Times New Roman', serif; font-size:17px; font-weight:500; }
+    .terms-panel h3:first-child { margin-top:0; }
+    .terms-panel p { margin:0 0 10px; font-size:13px; }
+    .terms-panel a { color:var(--teal); font-weight:700; }
+    .terms-foot { display:flex; justify-content:space-between; gap:12px; padding:14px 22px 18px; }
+    .terms-decline { color:#fff; background:#a53c36; border:1px solid #a53c36; }
+    .terms-decline:hover { background:#913b35; }
+    .terms-accept { color:#fff; background:#176241; border:1px solid #176241; }
+    .terms-accept:hover { background:#0f4d33; }
+    body.refused .app-shell, body.refused #sidebarShowButton, body.refused .toast, body.refused #termsOverlay { display:none !important; }
+    #refusedScreen { position:fixed; inset:0; z-index:200; display:flex; align-items:center; justify-content:center; padding:24px; background:#000; color:#fff; text-align:center; }
+    #refusedScreen h2 { margin:0 0 10px; font-family:Georgia, 'Times New Roman', serif; font-size:24px; font-weight:500; }
+    #refusedScreen p { margin:0; color:rgba(255,255,255,.7); font-size:13px; }
     .help-card { margin-top:18px; padding:13px; border-left:3px solid #ddbd79; border-radius:0 9px 9px 0; color:rgba(255,255,255,.86); background:rgba(8,49,45,.24); font-size:12px; }
     .help-card strong { color:#fff; }
     .field-label { display:block; margin:12px 0 6px; color:#c6e0d8; font-size:11px; letter-spacing:.12em; text-transform:uppercase; font-weight:700; }
@@ -183,10 +209,69 @@
     @media (max-width:960px) { .app-shell { grid-template-columns:1fr; } .sidebar { position:relative; height:auto; min-height:0; padding:23px 20px; } .main { padding:28px 20px 40px; } .filter-field, .filter-field.wide { flex:1 1 100%; } .filter-actions { justify-content:flex-end; margin-left:0; } }
     @media (max-width:620px) { .main-header, .list-toolbar, .section-heading { align-items:flex-start; flex-direction:column; } .storage-card { width:100%; } .toolbar-actions { width:100%; } .toolbar-actions .button { flex:1; } .main-title h2 { font-size:32px; } .filters { padding:16px; } }
     @media (prefers-reduced-motion:no-preference) { .month-chip { animation:chip-enter 180ms cubic-bezier(.23,1,.32,1) both; } @keyframes chip-enter { from { opacity:0; transform:translateY(5px); } to { opacity:1; transform:translateY(0); } } }
-    @media print { @page { margin:12mm; } body { background:#fff; font-size:10pt; } .sidebar, .month-panel, .filters, .storage-card, .toolbar-actions, .order-bar, .toast, #sidebarShowButton, .report-panel { display:none !important; } body.print-reports-only .report-panel { display:block !important; } body.print-reports-only .list-panel { display:none !important; } body.print-notes-only tr[data-has-note="0"] { display:none; } .app-shell { display:block; } .main { padding:0; } .main-header { margin:0 0 8px; } .main-title .eyebrow { margin-bottom:2px; font-size:8pt; } .main-title h2 { font-size:18pt; } .main-title p { display:none; } .list-panel { border:0; border-radius:0; box-shadow:none; } .list-toolbar { padding:0 0 6px; border-bottom:1px solid #777; } .list-toolbar p { display:none; } .list-summary { padding:4px 0; background:#fff; } .table-wrap { overflow:visible; } table { min-width:0; table-layout:fixed; } th { padding:6px 5px; background:#f3f3f3; font-size:8pt; } td { padding:6px 5px; } th:nth-child(1), td:nth-child(1) { width:22%; } th:nth-child(2), td:nth-child(2) { width:11%; } th:nth-child(3), td:nth-child(3) { width:12%; } th:nth-child(4), td:nth-child(4) { width:15%; } th:nth-child(5), td:nth-child(5) { width:40%; } table.cols-4 th:nth-child(1), table.cols-4 td:nth-child(1) { width:25%; } table.cols-4 th:nth-child(2), table.cols-4 td:nth-child(2) { width:12%; } table.cols-4 th:nth-child(3), table.cols-4 td:nth-child(3) { width:13%; } table.cols-4 th:nth-child(4), table.cols-4 td:nth-child(4) { width:50%; } .phone-line { color:inherit; } .events { min-width:0; } .event { padding:2px 3px; border:0; font-size:8pt; } .badge { font-size:7pt; } .note-input { border:1px solid #999; font-size:9pt; } .print-only { display:inline !important; } .screen-only { display:none !important; } .report-panel { border:0; border-radius:0; box-shadow:none; } .report-table-wrap { overflow:visible; border:0; border-radius:0; margin-bottom:12px; } .report-table-wrap h4 { background:#f3f3f3; font-size:8pt; padding:6px 8px; } .report-table-wrap table { min-width:0; width:100%; } .report-table-wrap th:nth-child(n), .report-table-wrap td:nth-child(n) { width:auto; padding:4px 3px; font-size:7.5pt; } .report-table-wrap th:first-child, .report-table-wrap td:first-child { width:24%; } .report-table-wrap th { white-space:normal; } }
+    @media print { @page { margin:12mm; } body { background:#fff; font-size:10pt; } .sidebar, .month-panel, .filters, .storage-card, .toolbar-actions, .order-bar, .toast, #sidebarShowButton, .report-panel, #termsOverlay, #refusedScreen { display:none !important; } body.print-reports-only .report-panel { display:block !important; } body.print-reports-only .list-panel { display:none !important; } body.print-notes-only tr[data-has-note="0"] { display:none; } .app-shell { display:block; } .main { padding:0; } .main-header { margin:0 0 8px; } .main-title .eyebrow { margin-bottom:2px; font-size:8pt; } .main-title h2 { font-size:18pt; } .main-title p { display:none; } .list-panel { border:0; border-radius:0; box-shadow:none; } .list-toolbar { padding:0 0 6px; border-bottom:1px solid #777; } .list-toolbar p { display:none; } .list-summary { padding:4px 0; background:#fff; } .table-wrap { overflow:visible; } table { min-width:0; table-layout:fixed; } th { padding:6px 5px; background:#f3f3f3; font-size:8pt; } td { padding:6px 5px; } th:nth-child(1), td:nth-child(1) { width:22%; } th:nth-child(2), td:nth-child(2) { width:11%; } th:nth-child(3), td:nth-child(3) { width:12%; } th:nth-child(4), td:nth-child(4) { width:15%; } th:nth-child(5), td:nth-child(5) { width:40%; } table.cols-4 th:nth-child(1), table.cols-4 td:nth-child(1) { width:25%; } table.cols-4 th:nth-child(2), table.cols-4 td:nth-child(2) { width:12%; } table.cols-4 th:nth-child(3), table.cols-4 td:nth-child(3) { width:13%; } table.cols-4 th:nth-child(4), table.cols-4 td:nth-child(4) { width:50%; } .phone-line { color:inherit; } .events { min-width:0; } .event { padding:2px 3px; border:0; font-size:8pt; } .badge { font-size:7pt; } .note-input { border:1px solid #999; font-size:9pt; } .print-only { display:inline !important; } .screen-only { display:none !important; } .report-panel { border:0; border-radius:0; box-shadow:none; } .report-table-wrap { overflow:visible; border:0; border-radius:0; margin-bottom:12px; } .report-table-wrap h4 { background:#f3f3f3; font-size:8pt; padding:6px 8px; } .report-table-wrap table { min-width:0; width:100%; } .report-table-wrap th:nth-child(n), .report-table-wrap td:nth-child(n) { width:auto; padding:4px 3px; font-size:7.5pt; } .report-table-wrap th:first-child, .report-table-wrap td:first-child { width:24%; } .report-table-wrap th { white-space:normal; } }
   </style>
 </head>
 <body>
+  <div id="termsOverlay" hidden>
+    <div class="terms-modal" role="dialog" aria-modal="true" aria-labelledby="termsTitle">
+      <div class="terms-head">
+        <h2 id="termsTitle">Termos e Condições de Uso</h2>
+        <p>Versão dos termos v1.0 · É preciso ler e concordar para usar o aplicativo</p>
+      </div>
+      <div class="terms-tabs" role="tablist" aria-label="Seções dos termos">
+        <button class="terms-tab active" id="termsTab-privacy" data-tab="privacy" type="button" role="tab">Políticas de Privacidade</button>
+        <button class="terms-tab" id="termsTab-terms" data-tab="terms" type="button" role="tab">Termos de Uso</button>
+        <button class="terms-tab" id="termsTab-legal" data-tab="legal" type="button" role="tab">Aviso Legal</button>
+      </div>
+      <div class="terms-body">
+        <section class="terms-panel" id="termsPanel-privacy" role="tabpanel" aria-label="Políticas de Privacidade">
+          <h3>Quais dados são coletados</h3>
+          <p>O aplicativo <strong>não coleta nada por conta própria</strong>: não há conta, login, telemetria, analytics, cookies de rastreamento nem envio a servidores. Os únicos dados existentes são os que <strong>você cola</strong> dos relatórios (nomes de pacientes, CNS, CPF, telefones e agendamentos).</p>
+          <h3>Como são armazenados</h3>
+          <p>Tudo fica <strong>somente neste dispositivo</strong>, no armazenamento local do navegador embutido (localStorage). Cada aparelho tem seu próprio banco independente. Apagar os dados ("Limpar todos os dados") ou desinstalar remove tudo.</p>
+          <h3>Como são utilizados</h3>
+          <p>Os dados servem exclusivamente para montar, neste aparelho, a lista de acompanhamento, os relatórios, as anotações de decisão e as impressões. <strong>Nada é transmitido pela internet pelo aplicativo</strong> (só os links de WhatsApp/telefone que você toca abrem o mensageiro).</p>
+          <h3>Direitos do usuário (LGPD)</h3>
+          <p>Você pode, a qualquer momento: ver tudo que está guardado (a lista mostra), corrigir (reimportando a agenda), copiar (portabilidade) e <strong>eliminar tudo</strong> com "Limpar todos os dados". Não há decisão automatizada nem compartilhamento.</p>
+          <h3>Contato do desenvolvedor</h3>
+          <p>E-mail: <a href="mailto:mmr05@hotmail.com">mmr05@hotmail.com</a> · Telefone: <a href="tel:11978831938">11 97883-1938</a>.</p>
+        </section>
+        <section class="terms-panel" id="termsPanel-terms" role="tabpanel" aria-label="Termos de Uso" hidden>
+          <h3>Como o aplicativo funciona</h3>
+          <p>Você cola a cópia do relatório de agendamentos; o programa identifica profissional, meses, pacientes e situações <strong>localmente</strong> e oferece filtros, lista, relatórios por profissional/mês, campo de decisão e impressão. Requer uma nova aceitação destes termos a cada versão do programa.</p>
+          <h3>Uso permitido</h3>
+          <p>Uso como ferramenta de apoio ao trabalho em saúde, com dados aos quais você tenha acesso legítimo, respeitando sigilo profissional e a legislação (incluindo a LGPD). É vedado qualquer uso ilegal.</p>
+          <h3>O que é permitido e o que é proibido</h3>
+          <p><strong>Permitido:</strong> importar, filtrar, anotar, copiar, imprimir e gerenciar os registros do seu acompanhamento. <strong>Proibido:</strong> usar o app para fins ilícitos, violar sigilo de pacientes, repassar dados a não autorizados ou tentar extrair/modificar o programa além do uso normal.</p>
+          <h3>Propriedade intelectual</h3>
+          <p>O aplicativo, seu nome, textos e código pertencem ao desenvolvedor (wavizo). Todos os direitos reservados. Nenhuma parte destes termos transfere propriedade sobre o programa.</p>
+          <h3>Demonstração gratuita</h3>
+          <p>Esta é uma <strong>versão de demonstração gratuita, válida por um mês após a primeira instalação</strong>. Para continuar usando após esse prazo, adquira a versão licenciada.</p>
+          <h3>Como adquirir a versão licenciada</h3>
+          <p>Fale com o desenvolvedor: e-mail <a href="mailto:mmr05@hotmail.com">mmr05@hotmail.com</a> ou telefone <a href="tel:11978831938">11 97883-1938</a>.</p>
+        </section>
+        <section class="terms-panel" id="termsPanel-legal" role="tabpanel" aria-label="Aviso Legal" hidden>
+          <h3>Limites de uso e legalidade</h3>
+          <p>Use o aplicativo dentro da lei e das normas da sua função. Dados de saúde exigem cuidado redobrado: não exponha informações de pacientes a terceiros nem em redes.</p>
+          <h3>Funcionalidades não projetadas</h3>
+          <p>O programa é uma ferramenta de apoio e <strong>não substitui</strong> prontuários ou sistemas oficiais. Não nos responsabilizamos por decisões tomadas com base em interpretações além do que o app se propõe (organizar localmente o que você colou).</p>
+          <h3>Uso indevido</h3>
+          <p>O usuário responde pelo uso que faz do aplicativo e dos dados nele contidos, incluindo importações incorretas, compartilhamentos indevidos e descumprimento destes termos ou da lei.</p>
+        </section>
+      </div>
+      <div class="terms-foot">
+        <button class="button terms-decline" id="termsDecline" type="button">Quero sair</button>
+        <button class="button terms-accept" id="termsAccept" type="button">Eu concordo</button>
+      </div>
+    </div>
+  </div>
+  <div id="refusedScreen" hidden>
+    <div>
+      <h2>Uso não autorizado</h2>
+      <p>Você optou por não aceitar os Termos e Condições de Uso.<br>O aplicativo foi encerrado.</p>
+    </div>
+  </div>
   <div class="app-shell">
     <aside class="sidebar" aria-label="Importação e armazenamento local">
       <div class="sidebar-head-row"><button class="button button-subtle" id="sidebarHideButton" type="button">◀ Ocultar painel</button></div>
@@ -338,6 +423,35 @@
       let currentOrder = 'alpha';
       const UI_KEY = 'acompanhamento-ui';
       let ui = loadUI();
+      // Versões do aceite: MANTER APP_VERSION igual ao AppxManifest (ver manual).
+      // O modal reaparece quando qualquer uma das duas mudar.
+      const APP_VERSION = '1.0.9.0';
+      const TERMS_VERSION = '1.0';
+      const TERMS_KEY = 'acompanhamento-terms-accept';
+
+      function loadTermsAccept() {
+        try { return JSON.parse(localStorage.getItem(TERMS_KEY) || 'null'); }
+        catch (error) { return null; }
+      }
+
+      function termsAccepted() {
+        const rec = loadTermsAccept();
+        return !!(rec && rec.appVersion === APP_VERSION && rec.termsVersion === TERMS_VERSION);
+      }
+
+      function activateTermsTab(name) {
+        ['privacy', 'terms', 'legal'].forEach((n) => {
+          $('termsTab-' + n).classList.toggle('active', n === name);
+          $('termsPanel-' + n).hidden = n !== name;
+        });
+      }
+
+      function applyTermsGate() {
+        const need = !termsAccepted();
+        $('termsOverlay').hidden = !need;
+        document.body.classList.toggle('terms-open', need);
+        if (need) activateTermsTab('privacy');
+      }
 
       function loadUI() {
         try {
@@ -928,6 +1042,33 @@
       });
       $('sidebarHideButton').addEventListener('click', () => { ui.sidebarHidden = true; persistUI(); applyUI(); });
       $('sidebarShowButton').addEventListener('click', () => { ui.sidebarHidden = false; persistUI(); applyUI(); });
+      $('termsTab-privacy').addEventListener('click', () => activateTermsTab('privacy'));
+      $('termsTab-terms').addEventListener('click', () => activateTermsTab('terms'));
+      $('termsTab-legal').addEventListener('click', () => activateTermsTab('legal'));
+      $('termsAccept').addEventListener('click', () => {
+        let installedAt = '';
+        try { installedAt = (loadTermsAccept() || {}).installedAt || ''; } catch (error) { installedAt = ''; }
+        const now = new Date().toISOString();
+        try {
+          localStorage.setItem(TERMS_KEY, JSON.stringify({
+            appVersion: APP_VERSION,
+            termsVersion: TERMS_VERSION,
+            acceptedAt: now,
+            installedAt: installedAt || now
+          }));
+        } catch (error) { /* sem espaço? libera nesta sessão, pede de novo depois */ }
+        document.body.classList.remove('refused');
+        $('refusedScreen').hidden = true;
+        applyTermsGate();
+        showToast('Termos aceitos. Bom acompanhamento!');
+      });
+      $('termsDecline').addEventListener('click', () => {
+        try { window.close(); } catch (error) { /* segue p/ a tela preta */ }
+        window.setTimeout(() => {
+          $('refusedScreen').hidden = false;
+          document.body.classList.add('refused');
+        }, 250);
+      });
       $('copyReportButton').addEventListener('click', copyReport);
       $('profChips').addEventListener('click', (event) => {
         const button = event.target.closest('[data-remove-prof]');
@@ -963,6 +1104,7 @@
         renderList();
       });
 
+      applyTermsGate();
       applyUI();
       updateMonthViews();
       renderList();

@@ -97,6 +97,45 @@ Data: 2026-10-06
 - Versão 1.0.5.0→1.0.6.0 (+PrivacyNotice); wwwroot espelhado; repack+resign
   (~63 MB, 2 cópias); smoke test exe 20 s OK; push normal main+master.
 
+## Sessão 2026-10-08 (modal de aceite de termos, v1.0.9.0)
+
+### Pedido do dono
+- Modal bloqueante de "Termos e Condições de Uso" na 1ª execução; CADA versão
+  do programa exige aceite registrado. Sem fechar por fora/ESC/X.
+- 3 abas com área 300px + scroll: Privacidade, Termos de Uso, Aviso Legal
+  (tópicos listados; e-mail mmr05@hotmail.com, tel 11978831938; demo 1 mês
+  após 1ª instalação; contato p/ licença).
+- Rodapé: "Quero sair" (vermelho, fecha) / "Eu concordo" (verde, libera).
+- Aceite em flag de config + versão dos termos (v1.0) p/ reexibir; sem
+  window.close possível → tela preta total sem funcionalidade.
+
+### Etapa 0 — modal HTML+CSS (CONCLUÍDA)
+- Overlay fixo escuro + modal central (sem X, sem handler de fora/ESC);
+  abas por id (testável), painéis 300px com scroll, textos estruturados PT-BR
+  cobrindo todos os tópicos; tela preta `#refusedScreen`; regra `[hidden]`.
+
+### Etapa 1 — gate por versão + aceite/saída (CONCLUÍDA)
+- `APP_VERSION` ('1.0.9.0', igual ao manifesto) + `TERMS_VERSION` ('1.0');
+  aceite vale só se ambos baterem → versão nova ou termos novos reexibem.
+-   Registro `acompanhamento-terms-accept` {appVersion, termsVersion,
+  acceptedAt, installedAt} = "flag em config" no mundo PWA (localStorage).
+- "Eu concordo" salva + libera + toast; "Quero sair" tenta window.close()
+  e em 250 ms cai na tela preta total (sem função); overlay/print fora do papel.
+
+### Etapa 2 — legais standalone (CONCLUÍDA)
+- `termos-de-servico.html`: nova seção 5 (demo 1 mês + licença/contato).
+- `politica-de-privacidade.html`: contato com e-mail mmr05@hotmail.com.
+
+### Etapa 3 — testes + rebuild v1.0.9.0 (CONCLUÍDA)
+- Suíte principal: modal abre sem aceite, 3 abas trocam, aceite carimba
+  app+termos+datas e libera, recusa tenta close e cai na preta; suíte de gate
+  (4 cenários: vazio/abre, atual/fecha, app velho/reabre, termos velhos/reabre);
+  demais suítes verdes.
+- Versão 1.0.8.0→1.0.9.0 (+PrivacyNotice); wwwroot espelhado; repack+resign
+  (~63 MB, 2 cópias); smoke test exe 20 s OK; push normal main+master.
+- Presunção/aviso: " installedAt" = 1º aceite (base da demo de 1 mês, sem
+  bloqueio automático); recusa sem fechar = reinstalar p/ tentar de novo.
+
 ## Sessão 2026-10-08 (relatório compacto p/ impressão, v1.0.8.0)
 
 ### Pedido do dono (com print das tabelas)
