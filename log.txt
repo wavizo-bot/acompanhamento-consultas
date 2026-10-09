@@ -97,6 +97,31 @@ Data: 2026-10-06
 - Versão 1.0.5.0→1.0.6.0 (+PrivacyNotice); wwwroot espelhado; repack+resign
   (~63 MB, 2 cópias); smoke test exe 20 s OK; push normal main+master.
 
+## Sessão 2026-10-09 (1.0.9.0 não abre na Store — diagnóstico, v1.0.10.0)
+
+### Pedido do dono (+ prints)
+- 1.0.9.0 da Store trava no splash verde e fecha em <1 min (Win11 pessoal,
+  admin). Mesmo sintoma da tela verde original.
+
+### Investigação minha
+- Página exata do pacote no Edge real: abre SEM erros, modal aparece.
+  Payload completo; exe isolado (outra pasta/CWD) roda 20 s OK.
+- Conclusão: falha só existe sob identidade Store; sem trilha, impossível
+  adivinhar — então instrumentei o app p/ deixar trilha.
+
+### Feito (sucesso)
+1. `startup.log` com cada passo (Main→…→webview-ok); catch global +
+   UnhandledException → `startup-error.log` + MessageBox (antes, exceção
+   antes do Form = morte silenciosa = splash até timeout — provável causa!).
+2. WebView2 movido p/ evento Shown (janela aparece primeiro) + watchdog 60 s
+   + erro exibido DENTRO do formulário (caminho do log).
+3. Versão 1.0.9.0→1.0.10.0 (+PrivacyNotice); repack+resign (~63 MB, 2 cópias);
+   smoke isolado OK com step log completo; push normal main+master.
+4. Se 1.0.10.0 falhar aí: mandar o conteúdo de
+   %LOCALAPPDATA%\Packages\wavizo.SlSSAcompanhamentodeconsultas_c5p81jb0en0bm\
+   LocalCache\Local\wavizo.SlSSAcompanhamentodeconsultas\startup.log
+   (diz exatamente onde parou) — ou o Event Viewer (Win+R eventvwr).
+
 ## Sessão 2026-10-08 (modal de aceite de termos, v1.0.9.0)
 
 ### Pedido do dono
