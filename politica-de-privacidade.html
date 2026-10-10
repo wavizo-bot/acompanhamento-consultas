@@ -112,7 +112,7 @@
 
         <div class="content">
             <h2>Visão geral</h2>
-            <p>O aplicativo <strong>SlSS Acompanhamento de consultas</strong> é um programa local‑first: todos os seus dados ficam <span class="highlight">apenas neste dispositivo</span>, armazenados no navegador embutido (localStorage / IndexedDB). <strong>Nada é enviado para a internet por esta página.</strong></p>
+            <p>O aplicativo <strong>SlSS Acompanhamento de consultas</strong> é um programa local‑first: todos os seus dados ficam <span class="highlight">apenas neste dispositivo</span>, armazenados no navegador embutido (banco de dados local IndexedDB). <strong>Nada é enviado para a internet por esta página.</strong></p>
             <p>Dados de saúde, nomes de pacientes, CNS, CPF, telefones e o histórico de agendamentos são importados por você a partir de relatórios copiados e colados — e permanecem exclusivamente no armazenamento local do seu computador.</p>
 
             <h2>O que coletamos</h2>
@@ -127,7 +127,9 @@
             </ul>
 
             <h2>Como os dados são armazenados</h2>
-            <p>Todos os registros são salvos no <strong>localStorage do WebView2</strong> (motor Edge Chromium embutido). Os dados permanecem no disco rígido local e são apagados quando você limpa os dados do aplicativo ou o desinstala.</p>
+            <p>Todos os registros são salvos no <strong>banco de dados local (IndexedDB) do
+WebView2</strong> (motor Edge Chromium embutido). Os dados permanecem no disco rígido local e são apagados quando você
+limpa os dados do aplicativo ou o desinstala.</p>
 
             <h2>Seus direitos</h2>
             <p>Você pode, a qualquer momento:</p>

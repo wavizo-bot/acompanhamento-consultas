@@ -229,7 +229,7 @@
           <h3>Quais dados são coletados</h3>
           <p>O aplicativo <strong>não coleta nada por conta própria</strong>: não há conta, login, telemetria, analytics, cookies de rastreamento nem envio a servidores. Os únicos dados existentes são os que <strong>você cola</strong> dos relatórios (nomes de pacientes, CNS, CPF, telefones e agendamentos).</p>
           <h3>Como são armazenados</h3>
-          <p>Tudo fica <strong>somente neste dispositivo</strong>, no armazenamento local do navegador embutido (localStorage). Cada aparelho tem seu próprio banco independente. Apagar os dados ("Limpar todos os dados") ou desinstalar remove tudo.</p>
+          <p>Tudo fica <strong>somente neste dispositivo</strong>, no banco de dados local do navegador embutido (IndexedDB). Cada aparelho tem seu próprio banco independente. Apagar os dados ("Limpar todos os dados") ou desinstalar remove tudo.</p>
           <h3>Como são utilizados</h3>
           <p>Os dados servem exclusivamente para montar, neste aparelho, a lista de acompanhamento, os relatórios, as anotações de decisão e as impressões. <strong>Nada é transmitido pela internet pelo aplicativo</strong> (só os links de WhatsApp/telefone que você toca abrem o mensageiro).</p>
           <h3>Direitos do usuário (LGPD)</h3>
@@ -417,7 +417,7 @@
       const LEGACY_KEY = 'acompanhamento-consultas-v1';
       const UNIDENTIFIED = '(Não identificado)';
       const STATUS = ['AGENDADO','ADMITIDO','CANCELADO','TRANSFERIDO','FALTOU','AGENDA RESERVA','RESERVA CANCELADA','RESERVADO','NÃO REALIZADO'];
-      let appState = loadState();
+      let appState = { professionals: [], notes: {} };
       let generatedRows = [];
       let toastTimer;
       let currentOrder = 'alpha';
@@ -425,7 +425,7 @@
       let ui = loadUI();
       // Versões do aceite: MANTER APP_VERSION igual ao AppxManifest (ver manual).
       // O modal reaparece quando qualquer uma das duas mudar.
-      const APP_VERSION = '1.0.11.0';
+      const APP_VERSION = '1.0.12.0';
       const TERMS_VERSION = '1.0';
       const TERMS_KEY = 'acompanhamento-terms-accept';
 
@@ -479,27 +479,132 @@
       const $ = (id) => document.getElementById(id);
       const esc = (value) => String(value ?? '').replace(/[&<>"']/g, (char) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[char]));
 
-      function loadState() {
+      // Armazenamento: o volume (profissionais/meses/anotações) vive no IndexedDB
+      // (cota de GBs); preferências e aceite (bytes) ficam no localStorage.
+      const IDB_NAME = 'acompanhamento-consultas';
+      const IDB_STORE = 'kv';
+      const STATE_KEY = 'state-v2';
+      let idbBackend = false;
+      let idbDbPromise = null;
+
+      function idbOpen() {
+        return new Promise((resolve, reject) => {
+          try {
+            if (!('indexedDB' in window) || !window.indexedDB) return reject(new Error('no-idb'));
+            const req = window.indexedDB.open(IDB_NAME, 1);
+            req.onupgradeneeded = () => { req.result.createObjectStore(IDB_STORE); };
+            req.onsuccess = () => resolve(req.result);
+            req.onerror = () => reject(req.error || new Error('idb-open'));
+          } catch (error) { reject(error); }
+        });
+      }
+
+      function idb() {
+        if (!idbDbPromise) idbDbPromise = idbOpen();
+        return idbDbPromise;
+      }
+
+      function idbGet(key) {
+        return idb().then((db) => new Promise((resolve, reject) => {
+          try {
+            const rq = db.transaction(IDB_STORE, 'readonly').objectStore(IDB_STORE).get(key);
+            rq.onsuccess = () => resolve(rq.result !== undefined ? rq.result : null);
+            rq.onerror = () => reject(rq.error || new Error('idb-get'));
+          } catch (error) { reject(error); }
+        }));
+      }
+
+      function idbPut(key, value) {
+        return idb().then((db) => new Promise((resolve, reject) => {
+          try {
+            const tx = db.transaction(IDB_STORE, 'readwrite');
+            tx.objectStore(IDB_STORE).put(value, key);
+            tx.oncomplete = () => resolve();
+            tx.onerror = () => reject(tx.error || new Error('idb-put'));
+          } catch (error) { reject(error); }
+        }));
+      }
+
+      function normalizeState(parsed) {
+        if (!parsed || typeof parsed !== 'object') return null;
+        if (!Array.isArray(parsed.professionals)) return null;
+        const notes = parsed.notes && typeof parsed.notes === 'object' ? parsed.notes : {};
+        return { professionals: parsed.professionals.filter((p) => p && typeof p.name === 'string' && Array.isArray(p.reports)), notes };
+      }
+
+      function loadStateFromLocal() {
         try {
           const raw = localStorage.getItem(STORAGE_KEY);
           if (raw) {
-            const parsed = JSON.parse(raw);
-            const professionals = Array.isArray(parsed.professionals) ? parsed.professionals : [];
-            const notes = parsed.notes && typeof parsed.notes === 'object' ? parsed.notes : {};
-            return { professionals: professionals.filter((p) => p && typeof p.name === 'string' && Array.isArray(p.reports)), notes };
+            const parsed = normalizeState(JSON.parse(raw));
+            if (parsed) return parsed;
           }
           // Migração do formato antigo (v1: meses sem profissional).
           const legacy = JSON.parse(localStorage.getItem(LEGACY_KEY) || 'null');
           if (legacy && Array.isArray(legacy.reports) && legacy.reports.length) {
             return { professionals: [{ name: '', specialty: '', reports: legacy.reports }], notes: {} };
           }
+        } catch (error) { /* ignora e segue vazio */ }
+        return null;
+      }
+
+      async function loadStateAsync() {
+        // 1) IndexedDB (caminho normal).
+        try {
+          const saved = await idbGet(STATE_KEY);
+          const parsed = saved !== null && saved !== undefined ? normalizeState(saved.value !== undefined ? saved.value : saved) : null;
+          if (parsed) { idbBackend = true; return parsed; }
+          // 2) Migra do localStorage p/ o IndexedDB (uma vez só).
+          const migrated = loadStateFromLocal();
+          idbBackend = true;
+          if (migrated) {
+            await idbPut(STATE_KEY, migrated);
+            try { localStorage.removeItem(STORAGE_KEY); localStorage.removeItem(LEGACY_KEY); } catch (error) { /* segue */ }
+            return migrated;
+          }
           return { professionals: [], notes: {} };
         } catch (error) {
-          return { professionals: [], notes: {} };
+          // 3) Fallback: localStorage (motores sem IndexedDB).
+          idbBackend = false;
+          idbDbPromise = null;
+          return loadStateFromLocal() || { professionals: [], notes: {} };
         }
       }
 
-      function persist() { localStorage.setItem(STORAGE_KEY, JSON.stringify(appState)); }
+      function persist() {
+        const snapshot = appState;
+        saveStateAsync(snapshot).catch((error) => {
+          showToast('Não foi possível salvar (armazenamento cheio?). Libere espaço e tente de novo.', true);
+        });
+      }
+
+      async function saveStateAsync(state) {
+        if (idbBackend) {
+          await idbPut(STATE_KEY, state);
+        } else {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+        }
+      }
+
+      function stateSizeMB() {
+        try {
+          const json = JSON.stringify(appState);
+          if (typeof TextEncoder !== 'undefined') return new TextEncoder().encode(json).length / 1048576;
+          return json.length * 2 / 1048576;
+        } catch (error) { return 0; }
+      }
+
+      async function bootStorage() {
+        // Pede persistência contra limpeza automática (melhor esforço).
+        try {
+          if (navigator.storage && navigator.storage.persist) await navigator.storage.persist();
+        } catch (error) { /* segue sem persistência garantida */ }
+        try {
+          appState = await loadStateAsync();
+        } catch (error) {
+          appState = loadStateFromLocal() || { professionals: [], notes: {} };
+        }
+      }
 
       function showToast(message, isError = false) {
         const toast = $('toast');
@@ -655,7 +760,7 @@
         $('storageCount').textContent = professionals.length
           ? `${professionals.length} ${professionals.length === 1 ? 'profissional' : 'profissionais'} · ${totalMonths} ${totalMonths === 1 ? 'mês' : 'meses'}`
           : 'Nenhum dado';
-        $('storageDetail').textContent = professionals.length ? `${totalEntries} agendamentos identificados` : 'aguardando importação';
+        $('storageDetail').textContent = professionals.length ? `${totalEntries} agendamentos · ${stateSizeMB().toFixed(1)} MB no aparelho` : 'aguardando importação';
 
         $('profChips').innerHTML = professionals.length ? professionals.map((prof) => {
           const count = (prof.reports || []).reduce((s, r) => s + (r.entries || []).length, 0);
@@ -1104,11 +1209,14 @@
         renderList();
       });
 
-      applyTermsGate();
-      applyUI();
-      updateMonthViews();
-      renderList();
-      renderReports();
+      (async () => {
+        await bootStorage();
+        applyTermsGate();
+        applyUI();
+        updateMonthViews();
+        renderList();
+        renderReports();
+      })();
 
       // --- PWA: instalação e funcionamento offline ---
       if ('serviceWorker' in navigator) {

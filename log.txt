@@ -97,6 +97,38 @@ Data: 2026-10-06
 - Versão 1.0.5.0→1.0.6.0 (+PrivacyNotice); wwwroot espelhado; repack+resign
   (~63 MB, 2 cópias); smoke test exe 20 s OK; push normal main+master.
 
+## Sessão 2026-10-09 (armazenamento IndexedDB, v1.0.12.0)
+
+### Pedido do dono
+- Aumentar o armazenamento. Perguntou se usa IndexedDB.
+
+### Resposta/investigação minha (Etapa 0 — CONCLUÍDA)
+- NÃO usava: tudo em localStorage (~5 MB). Medido: 3 profissionais × 2 meses
+  ≈ 0,5 MB serializado → ~1 ano de uso estoura. IndexedDB no WebView2 tem
+  cota de GBs. Decisão: volume (professionals+notes) → IndexedDB;
+  miudezas (aceite, prefs UI) ficam no localStorage.
+
+### Etapa 1 — migração p/ IndexedDB (CONCLUÍDA)
+- Banco `acompanhamento-consultas`, store `kv`, registro `state-v2` (mesmo
+  formato). Boot: 1) lê IDB; 2) se vazio, migra do localStorage (v2, senão
+  v1) e APAGA as chaves locais; 3) sem IDB → fallback localStorage.
+- `persist()` virou dispara-e-esquece com toast de erro (cobre quota do
+  fallback). Chamadas existentes intactas. Init agora é async (boot).
+- Cartão mostra "N MB no aparelho" (TextEncoder/length*2).
+
+### Etapa 2 — legais + versão (CONCLUÍDA)
+- Modal, politica-de-privacidade.html, PrivacyStatement.html e PrivacyNotice:
+  "banco de dados local (IndexedDB)". Versão 1.0.11.0→1.0.12.0 em tudo
+  (JS/manifesto/PrivacyNotice) — reabre o modal, como especificado.
+
+### Etapa 3 — testes + rebuild v1.0.12.0 (CONCLUÍDA)
+- Harnesses reescritos (boot async + IDB falso): principal verde (IDB como
+  backend, nada volumoso no localStorage, MB no cartão); migração v1/v2
+  (IDB + limpa chaves locais) e fallback (sem IDB, importa e salva no local)
+  verdes; gate/termos, exato-WhatsApp e migração antiga verdes.
+- wwwroot espelhado; repack+resign (~63 MB, 2 cópias); smoke exe 20 s OK;
+  push normal main+master.
+
 ## Sessão 2026-10-09 (1.0.10.0 fecha sozinho — EntryPoint, v1.0.11.0)
 
 ### Pedido do dono (+ prints)

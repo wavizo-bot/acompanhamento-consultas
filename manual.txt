@@ -24,7 +24,7 @@ Properties/DisplayName (NOME RESERVADO na Store) ... SlSS Acompanhamento de cons
 Package Family Name (PFN) ..... wavizo.SlSSAcompanhamentodeconsultas_c5p81jb0en0bm
 Package SID ................... S-1-15-2-4129138387-2334821746-3998454584-887326526-397364692-819623371-1943786192
 Store ID ...................... 9NCM6HXTK486
-AppxManifest Version .......... 1.0.11.0, arch x64, TargetDeviceFamily
+AppxManifest Version .......... 1.0.12.0, arch x64, TargetDeviceFamily
                                 Windows.Desktop, Min 10.0.19041.0, MaxTested 10.0.22621.0
 Capabilities .................. internetClient (exigido pelo WebView2) +
                                 rescap:runFullTrust (host .NET)
@@ -88,10 +88,11 @@ de massa de teste p/ colar no app), msix/unpacked/ (extração antiga p/ debug).
   CANCELADA, RESERVADO, NÃO REALIZADO); agrupa por mês (monthKey AAAA-MM).
   Cabeçalho: detecta Profissional/Especialidade (inline ou linha seguinte) e
   o TOTAL DE CONSULTA do rodapé (validação informado × identificado).
-- Estado: localStorage chave "acompanhamento-consultas-v2" =
+- Estado: IndexedDB `acompanhamento-consultas`/`kv`/`state-v2` =
   {professionals:[{name, specialty, reports:[{monthKey, entries[],
-  importedAt, expectedTotal}]}]}. Reimportar mês do MESMO profissional =
-  SUBSTITUI (confirm). v1 migra p/ profissional "(Não identificado)".
+  importedAt, expectedTotal}]}]} + notes. Migra do localStorage v2/v1 e limpa
+  as chaves; sem IDB cai p/ localStorage. Reimportar mês do MESMO profissional
+  = SUBSTITUI (confirm). Cartão mostra MB usados; pede storage.persist().
 - Lista: agrupa por pessoa (nº cadastro > CPF > CNS > nome); filtros
   profissionais (checkboxes inclusivos) + "contém/última situação" + meses;
   visão separado (pessoa+profissional) ou junto (pessoa, todos os
